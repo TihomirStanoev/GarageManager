@@ -1,7 +1,8 @@
+import random
 from decimal import Decimal
-
 from django.core.validators import MinValueValidator
 from django.db import models
+from cars.models import Car
 from common.models import RepairPartMixin, TimeStampedModel
 from repairs.choices import StatusChoice
 
@@ -51,7 +52,7 @@ class Repair(RepairPartMixin):
     )
 
     parts = models.ManyToManyField(
-        to=Part,
+        to='Part',
         through='RepairPart',
         related_name='repairs'
     )
@@ -78,12 +79,12 @@ class Repair(RepairPartMixin):
 
 class RepairPart(TimeStampedModel):
     repair = models.ForeignKey(
-        to=Repair,
+        to='Repair',
         on_delete=models.CASCADE,
         related_name='part_entries')
 
     part = models.ForeignKey(
-        to=Part,
+        to='Part',
         on_delete=models.CASCADE,
         related_name='repair_entries')
 
@@ -108,3 +109,61 @@ class RepairPart(TimeStampedModel):
 
     def __str__(self):
         return f'{self.part} - {self.quantity}'
+
+
+
+class Invoice(TimeStampedModel):
+    invoice_number = models.CharField(
+        max_length=10,
+        unique=True,
+        editable=False,
+    )
+
+    repair = models.ForeignKey(
+        to='Repair',
+        on_delete=models.CASCADE,
+        related_name='invoices')
+
+    owner = models.ForeignKey(
+        to='profiles.Profile',
+        on_delete=models.SET_NULL,
+        related_name='invoices',
+        null=True, blank=True
+    )
+
+
+    total_amount = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        default=0.00,
+        validators=[MinValueValidator(limit_value=Decimal('0.00'), message=f'Total amount cannot be negative.')]
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+
+
+    def _generate_invoice_number(self):
+        while True:
+            unique_ref = str(random.randint(1000000000, 9999999999))
+            if not Invoice.objects.filter(invoice_number=unique_ref): break
+        return unique_ref
+
+
+    def save(self, *args, **kwargs):
+        if not self.invoice_number:
+            self.invoice_number = self._generate_invoice_number()
+
+        if not self.owner_id:
+            self.owner = self.repair.car.owner
+
+        if not self.total_amount:
+            self.total_amount = self.repair.total_price
+
+
+        super().save(*args, **kwargs)
+
+
+
+    def __str__(self):
+        return f'{self.owner} ({self.repair.car}) - {self.invoice_number}'
