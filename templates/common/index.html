@@ -1,0 +1,115 @@
+{% extends 'common/../base.html' %}
+{% load static %}
+
+
+{% block content %}
+<section class="hero-section position-relative overflow-hidden text-white">
+    <div class="hero-bg-image"></div>
+    <div class="hero-overlay"></div>
+    <div class="container position-relative py-5">
+        <div class="row align-items-center min-vh-50 py-5">
+            <div class="col-lg-7">
+                <span class="badge rounded-pill bg-warning text-dark mb-3 px-3 py-2 fs-7">
+                    <i class="bi bi-lightning-fill me-1"></i>Auto Repair Management
+                </span>
+                <h1 class="display-4 fw-bold mb-3 lh-sm">
+                    Manage Your Garage<br>
+                    <span class="text-warning">Like a Pro</span>
+                </h1>
+                <p class="lead mb-4 fs-5" style="color: rgba(255,255,255,0.82)">
+                    Track clients, vehicles, repairs, and invoices — streamlined in a single dashboard.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="#" class="btn btn-warning btn-lg px-4 rounded-3 fw-semibold">
+                        <i class="bi bi-car-front me-2"></i>View Cars
+                    </a>
+                    <a href="#" class="btn btn-outline-light btn-lg px-4 rounded-3">
+                        <i class="bi bi-people me-2"></i>View Clients
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 row-cols-2 row-cols-md-3 row-cols-xl-5">
+            <div class="col">
+                <div class="card border-0 rounded-4 shadow-sm stat-card h-100">
+                    <div class="card-body p-4 text-center">
+                        <div class="stat-icon-wrap bg-primary bg-opacity-10 text-primary mx-auto mb-3">
+                            <i class="bi bi-people-fill fs-3"></i>
+                        </div>
+                        <h2 class="fw-bold mb-0">12</h2>
+                        <p class="text-muted small mb-3">Registered Clients</p>
+                        <a href="#" class="stretched-link text-primary fw-semibold small text-decoration-none">
+                            View All <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card border-0 rounded-4 shadow-sm stat-card h-100">
+                    <div class="card-body p-4 text-center">
+                        <div class="stat-icon-wrap bg-success bg-opacity-10 text-success mx-auto mb-3">
+                            <i class="bi bi-car-front-fill fs-3"></i>
+                        </div>
+                        <h2 class="fw-bold mb-0">27</h2>
+                        <p class="text-muted small mb-3">Registered Vehicles</p>
+                        <a href="#" class="stretched-link text-success fw-semibold small text-decoration-none">
+                            View All <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card border-0 rounded-4 shadow-sm stat-card h-100">
+                    <div class="card-body p-4 text-center">
+                        <div class="stat-icon-wrap bg-warning bg-opacity-10 text-warning mx-auto mb-3">
+                            <i class="bi bi-wrench-adjustable-circle-fill fs-3"></i>
+                        </div>
+                        <h2 class="fw-bold mb-0">5</h2>
+                        <p class="text-muted small mb-3">Active Repairs</p>
+                        <a href="#" class="stretched-link text-warning fw-semibold small text-decoration-none">
+                            View All <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card border-0 rounded-4 shadow-sm stat-card h-100">
+                    <div class="card-body p-4 text-center">
+                        <div class="stat-icon-wrap bg-danger bg-opacity-10 text-danger mx-auto mb-3">
+                            <i class="bi bi-box-seam-fill fs-3"></i>
+                        </div>
+                        <h2 class="fw-bold mb-0">84</h2>
+                        <p class="text-muted small mb-3">Parts in Catalogue</p>
+                        <a href="#" class="stretched-link text-danger fw-semibold small text-decoration-none">
+                            View All <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card border-0 rounded-4 shadow-sm stat-card h-100">
+                    <div class="card-body p-4 text-center">
+                        <div class="stat-icon-wrap bg-info bg-opacity-10 text-info mx-auto mb-3">
+                            <i class="bi bi-receipt fs-3"></i>
+                        </div>
+                        <h2 class="fw-bold mb-0">38</h2>
+                        <p class="text-muted small mb-3">Invoices Issued</p>
+                        <a href="#" class="stretched-link text-info fw-semibold small text-decoration-none">
+                            View All <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'common/../shared/quick_actions.html' %}
+
+
+{% endblock %}

@@ -1,0 +1,168 @@
+:root {
+    --garage-dark: #0f172a;
+    --garage-mid: #1e293b;
+    --garage-accent: #f59e0b;
+    --garage-accent-hover: #d97706;
+    --radius-lg: 1rem;
+}
+
+/* ── Navbar ── */
+.navbar {
+    backdrop-filter: blur(12px);
+    background: rgba(15, 23, 42, 0.95) !important;
+}
+
+.brand-icon {
+    width: 34px;
+    height: 34px;
+    background: var(--garage-accent);
+    color: var(--garage-dark);
+    font-size: 1rem;
+}
+
+.navbar-nav .nav-link {
+    transition: background 0.2s, color 0.2s;
+    font-size: 0.9rem;
+}
+
+.navbar-nav .nav-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.navbar-nav .nav-link.active {
+    color: var(--garage-accent) !important;
+    background: rgba(245, 158, 11, 0.1);
+    font-weight: 600;
+}
+
+/* ── Hero ── */
+.hero-section {
+    background: var(--garage-dark);
+    position: relative;
+}
+
+.hero-bg-image {
+    position: absolute;
+    inset: 0;
+    background-image: url('/static/images/header.jpeg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(3px) brightness(0.35);
+    transform: scale(1.05);
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        160deg,
+        rgba(15, 23, 42, 0.55) 0%,
+        rgba(15, 23, 42, 0.25) 50%,
+        rgba(15, 23, 42, 0.6) 100%
+    );
+    pointer-events: none;
+}
+
+.hero-section h1 {
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.min-vh-50 {
+    min-height: 50vh;
+}
+
+.hero-graphic {
+    font-size: 10rem;
+    opacity: 0.07;
+    line-height: 1;
+    color: white;
+}
+
+.hero-subtitle {
+    color: rgba(255, 255, 255, 0.82);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Stat Cards ── */
+.stat-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ── Action Cards ── */
+.action-icon-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.action-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.action-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1) !important;
+}
+
+.action-card:hover .action-icon-wrap {
+    transform: scale(1.1);
+}
+
+/* ── Page Header (reusable for inner pages) ── */
+.page-header {
+    background: linear-gradient(135deg, var(--garage-dark), var(--garage-mid));
+    color: white;
+    padding: 2.5rem 0;
+    margin-bottom: 2rem;
+}
+
+/* ── Tables ── */
+.table-hover tbody tr:hover {
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+/* ── Form Card ── */
+.form-card {
+    border: none;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-lg);
+}
+
+/* ── Badge ── */
+.badge {
+    font-size: 0.78em;
+}
+
+/* ── Footer ── */
+footer {
+    background: var(--garage-dark) !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .hero-section .display-4 {
+        font-size: 2rem;
+    }
+
+    .min-vh-50 {
+        min-height: auto;
+    }
+}
