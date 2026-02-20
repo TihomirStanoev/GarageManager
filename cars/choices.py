@@ -2,11 +2,11 @@ from django.db import models
 
 
 class BrandChoice(models.TextChoices):
-    AUDI = 'audi', 'Audi'
-    BMW = 'bmw', 'BMW'
-    VOLVO = 'volvo', 'Volvo'
-    MERCEDES = 'mercedes', 'Mercedes'
-    VOLKSWAGEN = 'volkswagen', 'Volkswagen'
+    AUDI = 'Audi', 'Audi'
+    BMW = 'BMW', 'BMW'
+    VOLVO = 'Volvo', 'Volvo'
+    MERCEDES = 'Mercedes', 'Mercedes'
+    VOLKSWAGEN = 'Volkswagen', 'Volkswagen'
 
 
 class EngineChoice(models.TextChoices):

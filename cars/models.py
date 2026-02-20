@@ -44,6 +44,10 @@ class Car(TimeStampedModel):
     class Meta:
         ordering = ['brand', 'model']
 
+    @property
+    def brand_model(self):
+        return f'{self.brand} {self.model}'
+
     def __str__(self):
         return f'({self.plate}) {self.brand} {self.model}'
 
