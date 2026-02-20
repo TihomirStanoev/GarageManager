@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card rounded-4 shadow border-0">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="stat-icon-wrap bg-primary bg-opacity-25 text-primary">
+                                <i class="{% block form_icon %}{% endblock %}"></i>
+                            </div>
+
+                                <div>
+                                    <h4 class="fw-bold mb-0">{% block form_title %}{% endblock %}</h4>
+                                    <small class="text-secondary">{% block form_description %}{% endblock %}</small>
+                                </div>
+
+                        </div>
+                            {% block form_block %}
+
+                            {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

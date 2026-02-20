@@ -46,6 +46,11 @@ PROJECT_APPS = [
     'repairs',
 ]
 
+ADDON_APPS = [
+    'crispy_forms',
+    'crispy_bootstrap5',
+]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -54,7 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-] + PROJECT_APPS
+] + PROJECT_APPS + ADDON_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -133,3 +138,6 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'

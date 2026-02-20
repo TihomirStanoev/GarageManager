@@ -141,9 +141,57 @@
 
 /* ── Form Card ── */
 .form-card {
-    border: none;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: var(--radius-lg);
+    background: var(--garage-mid) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    color: white;
+}
+
+.form-card .form-control,
+.form-card .form-select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: white;
+}
+
+.form-card .form-control:focus,
+.form-card .form-select:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--garage-accent);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    color: white;
+}
+
+.form-card .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.form-card label {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.form-card .form-text {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.form-card .invalid-feedback {
+    color: #f87171;
+}
+
+/* ── Avatar ── */
+.avatar-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
 }
 
 /* ── Badge ── */

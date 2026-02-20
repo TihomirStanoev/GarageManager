@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="avatar-circle bg-primary bg-opacity-25 text-primary rounded-circle d-flex align-items-center justify-content-center"
+                     style="width: 48px; height: 48px; font-size: 1rem; font-weight: bold;">
+                    {{ profile.first_name|first }}{{ profile.last_name|first }}
+                </div>
+                <div>
+                    <h1 class="h3 fw-bold mb-0">{{ profile }}</h1>
+                    <small class="opacity-75">Client since {{ profile.created_at|date:"M Y" }}</small>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'profiles:update' profile.pk %}" class="btn btn-warning btn-sm fw-semibold px-3">
+                    <i class="bi bi-pencil me-1"></i>Edit
+                </a>
+                <a href="{% url 'profiles:delete' profile.pk %}" class="btn btn-outline-danger btn-sm px-3">
+                    <i class="bi bi-trash me-1"></i>Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+
+        <div class="col-lg-4">
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="card-body p-4">
+                    <h6 class="text-muted text-uppercase fw-semibold small mb-3">Contact Info</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-center gap-3 py-2 border-bottom">
+                            <i class="bi bi-envelope text-primary"></i>
+                            <div>
+                                <div class="small text-muted">Email</div>
+                                <div class="fw-semibold">{{ profile.email }}</div>
+                            </div>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 py-2">
+                            <i class="bi bi-telephone text-success"></i>
+                            <div>
+                                <div class="small text-muted">Phone</div>
+                                <div class="fw-semibold">{{ profile.phone_number }}</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h6 class="text-muted text-uppercase fw-semibold small mb-0">
+                            Vehicles
+                            <span class="badge bg-primary bg-opacity-10 text-primary ms-2">{{ profile.cars.count }}</span>
+                        </h6>
+                        <a href="#" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-plus-lg me-1"></i>Add Car
+                        </a>
+                    </div>
+
+                    {% if profile.cars.all %}
+                    <div class="row g-3">
+                        {% for car in profile.cars.all %}
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center gap-3 p-3 rounded-3 bg-light">
+                                <div class="stat-icon-wrap bg-success bg-opacity-10 text-success">
+                                    <i class="bi bi-car-front-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold small">{{ car.brand }} {{ car.model }}</div>
+                                    <div class="text-muted small">{{ car.plate }} · {{ car.year }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-car-front display-6 opacity-25 d-block mb-2"></i>
+                        No vehicles registered.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
