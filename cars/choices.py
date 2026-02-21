@@ -10,8 +10,8 @@ class BrandChoice(models.TextChoices):
 
 
 class EngineChoice(models.TextChoices):
-    GASOLINE = 'gasoline', 'Gasoline'
-    DIESEL = 'diesel', 'Diesel'
-    HYBRID = 'hybrid', 'Hybrid'
-    ELECTRIC = 'electric', 'Electric'
-    LPG = 'lpg', 'LPG'
+    GASOLINE = 'Gasoline', 'Gasoline'
+    DIESEL = 'Diesel', 'Diesel'
+    HYBRID = 'Hybrid', 'Hybrid'
+    ELECTRIC = 'Electric', 'Electric'
+    LPG = 'Lpg', 'LPG'

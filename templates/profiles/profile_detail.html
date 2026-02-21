@@ -76,7 +76,11 @@
                                     <i class="bi bi-car-front-fill"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-semibold small">{{ car.brand }} {{ car.model }}</div>
+                                    <div class="fw-semibold small">
+                                            <a href="{% url 'cars:detail' car.plate %}" class="text-decoration-none text-reset">
+                                                {{ car.brand_model }}
+                                            </a>
+                                    </div>
                                     <div class="text-muted small">{{ car.plate }} · {{ car.year }}</div>
                                 </div>
                             </div>

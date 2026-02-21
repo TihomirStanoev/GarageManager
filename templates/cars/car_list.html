@@ -17,10 +17,10 @@
             </div>
             
             <div class="d-flex gap-2">
-                <form class="d-flex gap-2">
+                <form class="d-flex gap-2" action="{% url 'cars:list' %}">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search by plate or model...">
-                        <button class="btn btn-outline-light border" type="button">
+                        <input type="text" class="form-control" placeholder="Search by plate or model..." name="q">
+                        <button class="btn btn-outline-light border" type="submit">
                             <i class="bi bi-search"></i>
                         </button>
                     </div>
@@ -56,25 +56,32 @@
                                     <i class="bi bi-car-front"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-bold">{{ car.brand_model }}</div>
+                                    <div class="fw-bold">
+                                            <a href="{% url 'cars:detail' car.plate %}" class="text-decoration-none text-dark">
+                                                {{ car.brand_model }}
+                                            </a>
+                                    </div>
                                     <div class="text-muted small">{{ car.mileage|intcomma  }} km</div>
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <span class="badge bg-dark font-monospace px-3 py-2">{{ car.license_plate }}</span>
+                            <span class="badge bg-dark font-monospace px-3 py-2">{{ car.plate }}</span>
                         </td>
                         <td>
-                            <a href="{% if car.owner %}{% url 'profiles:detail' car.owner.pk %}{% else %}#{% endif %}" class="text-decoration-none fw-medium">{{ car.owner|default:'Add Owner' }}</a>
-
+                            {% if car.owner %}
+                            <a href="{% url 'profiles:detail' car.owner.pk %}" class="text-decoration-none fw-medium text-dark">{{ car.owner }}</a>
+                            {% else %}
+                            <a href="{% url 'cars:update' car.plate %}" class="btn btn-sm btn-outline-primary">Add Owner</a>
+                            {% endif %}
                         </td>
                         <td class="text-muted">{{ car.year }}</td>
                         <td><span class="badge bg-light text-dark border">{{ car.engine_type }}</span></td>
                         <td class="text-end pe-4">
-                            <a href="#" class="btn btn-sm btn-outline-secondary me-1">
+                            <a href="{% url 'cars:detail' car.plate %}" class="btn btn-sm btn-outline-secondary me-1">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            <a href="#" class="btn btn-sm btn-outline-primary me-1">
+                            <a href="{% url 'cars:update' car.plate %}" class="btn btn-sm btn-outline-primary me-1">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         </td>
@@ -84,6 +91,7 @@
             </table>
         </div>
     </div>
+{% include 'shared/paginator.html' %}
 </div>
 
 {% endblock %}

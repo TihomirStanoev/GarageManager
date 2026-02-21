@@ -45,6 +45,11 @@ class BaseCarForm(forms.ModelForm):
             }
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'owner' in self.fields:
+            self.fields['owner'].label_from_instance = lambda p: p.profile_with_phone
+
 
 class CreateCarForm(BaseCarForm):
     pass
@@ -52,7 +57,10 @@ class CreateCarForm(BaseCarForm):
 
 class UpdateCarForm(BaseCarForm):
     def __init__(self, *args, **kwargs):
-        self.fields['plate'].disabled = True
-        self.fields['mileage'].disabled = True
         super().__init__(*args, **kwargs)
+        disabled_fields = {'brand', 'year', 'plate', 'engine_type', 'mileage'}
+        for field in disabled_fields:
+            self.fields[field].disabled = True
+
+
 

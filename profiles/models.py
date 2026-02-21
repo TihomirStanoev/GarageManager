@@ -30,6 +30,10 @@ class Profile(TimeStampedModel):
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
+    @property
+    def profile_with_phone(self):
+        return f'{self.first_name} {self.last_name} ({self.phone_number})'
+
 
 
 
