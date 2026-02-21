@@ -3,7 +3,8 @@ from django.views.generic import TemplateView
 
 from cars.models import Car
 from profiles.models import Profile
-from repairs.models import Part
+from repairs.choices import StatusChoice
+from repairs.models import Part, Repair
 
 
 class IndexView(TemplateView):
@@ -16,6 +17,7 @@ class IndexView(TemplateView):
         kwargs['total_clients'] = Profile.objects.count()
         kwargs['total_cars'] = Car.objects.count()
         kwargs['total_parts'] = Part.objects.count()
+        kwargs['total_repairs'] = Repair.objects.filter(status=StatusChoice.DRAFT).count()
 
         return super().get_context_data(**kwargs)
 

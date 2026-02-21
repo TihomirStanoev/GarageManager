@@ -14,6 +14,18 @@ parts_patterns = [
 ]
 
 
+repairs_patterns = [
+    path('', views.RepairListView.as_view(), name='repairs_list'),
+    path('create/', views.RepairCreateView.as_view(), name='repairs_create'),
+    path('<int:pk>/', views.RepairDetailView.as_view(), name='repairs_detail'),
+    path('<int:pk>/update/', views.RepairUpdateView.as_view(), name='repairs_update'),
+    path('<int:repair_pk>/add_part/', views.add_part_to_repair, name='repairs_add_part'),
+
+]
+
+
 urlpatterns = [
+    path('', include(repairs_patterns)),
     path('parts/', include(parts_patterns)),
+
 ]

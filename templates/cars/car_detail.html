@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load garage_simple_tags %}
 
 {% block content %}
 
@@ -96,23 +97,21 @@
             </div>
         </div>
 
-        <!-- Right Column: Repairs (Matches Profile "Vehicles" list) -->
         <div class="col-lg-8">
             <div class="card border-0 rounded-4 shadow-sm">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h6 class="text-muted text-uppercase fw-semibold small mb-0">
                             Repair History
-                            <span class="badge bg-primary bg-opacity-10 text-primary ms-2">3</span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary ms-2">{{ car.repairs.count }}</span>
                         </h6>
-                        <a href="#" class="btn btn-sm btn-outline-primary">
+                        <a href="{% url 'repairs:repairs_create' %}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-plus-lg me-1"></i>Add Repair
                         </a>
                     </div>
 
-                    <!-- Repairs List -->
                     <div class="row g-3">
-                        <!-- Item 1 -->
+                        {% for repair in car.repairs.all %}
                         <div class="col-12">
                             <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light">
                                 <div class="d-flex align-items-center gap-3">
@@ -120,35 +119,17 @@
                                         <i class="bi bi-tools"></i>
                                     </div>
                                     <div>
-                                        <div class="fw-semibold">Brake Pads Replacement</div>
-                                        <div class="text-muted small">Oct 2023 · Completed</div>
+                                        <div class="fw-semibold">{{ repair.category }}</div>
+                                        <div class="text-muted small">{{ repair.created_at|date:"Y-m-d" }} · {{ repair.status }}</div>
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <div class="fw-bold">120.00 BGN</div>
+                                    <div class="fw-bold">{{ repair.total_price|currency }}</div>
                                     <a href="#" class="btn btn-sm btn-link text-decoration-none p-0">View Invoice</a>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Item 2 -->
-                        <div class="col-12">
-                            <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="stat-icon-wrap bg-primary bg-opacity-10 text-primary">
-                                        <i class="bi bi-droplet-half"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold">Oil Change</div>
-                                        <div class="text-muted small">Aug 2023 · Completed</div>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <div class="fw-bold">85.00 BGN</div>
-                                    <a href="#" class="btn btn-sm btn-link text-decoration-none p-0">View Invoice</a>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                     
                 </div>

@@ -13,5 +13,9 @@ def site_name():
     return SITE_NAME
 
 @register.filter
-def part_id(value):
+def format_id(value):
     return f'#{value:05d}'
+
+@register.filter
+def currency(value):
+    return f'{value:.2f}€'

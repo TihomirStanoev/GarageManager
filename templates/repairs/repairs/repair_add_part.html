@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+
+            <div class="mb-3">
+                <a href="{% url 'repairs:repairs_detail' repair.pk %}" class="text-muted text-decoration-none small">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Repair
+                </a>
+            </div>
+
+            <div class="card rounded-4 shadow border-0">
+                <div class="card-body p-4 p-md-5">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="stat-icon-wrap bg-warning bg-opacity-10 text-warning">
+                            <i class="bi bi-box-seam-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0">Add Part</h4>
+                            <small class="text-secondary">
+                                Repair #{{ repair.pk }} &mdash; {{ repair.car }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-warning fw-semibold px-4">
+                                <i class="bi bi-plus-lg me-2"></i>Add Part
+                            </button>
+                            <a href="{% url 'repairs:repairs_detail' repair.pk %}" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-x-lg me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
