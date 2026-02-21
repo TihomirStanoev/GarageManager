@@ -14,4 +14,4 @@ class EngineChoice(models.TextChoices):
     DIESEL = 'Diesel', 'Diesel'
     HYBRID = 'Hybrid', 'Hybrid'
     ELECTRIC = 'Electric', 'Electric'
-    LPG = 'Lpg', 'LPG'
+    LPG = 'LPG', 'LPG'

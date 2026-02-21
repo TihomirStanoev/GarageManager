@@ -50,9 +50,6 @@ class ProfileList(ListView):
         'title': 'Clients'
     }
 
-
-
-
     def get_queryset(self):
         q = self.request.GET.get('q')
         if q:

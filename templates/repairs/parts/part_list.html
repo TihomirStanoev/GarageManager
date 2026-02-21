@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load garage_simple_tags %}
+{% block content %}
+
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon-wrap bg-info bg-opacity-25 text-white">
+                    <i class="bi bi-gear-wide-connected fs-4 text-info"></i>
+                </div>
+                <div>
+                    <h1 class="h3 fw-bold mb-0">Parts Inventory</h1>
+                    <small class="opacity-75">{{ parts.count }} items in stock</small>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <form class="d-flex gap-2" action="{% url 'repairs:parts_list' %}">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search parts..." name="q">
+                        <button class="btn btn-outline-light border" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+                <a href="{% url 'repairs:parts_create' %}" class="btn btn-warning fw-semibold">
+                    <i class="bi bi-plus-lg me-2"></i>Add Part
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="card border-0 rounded-4 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead style="background: #f8f9fa; border-bottom: 2px solid #e9ecef;">
+                    <tr>
+                        <th class="ps-4 text-muted fw-semibold small text-uppercase">Part Name</th>
+                        <th class="text-muted fw-semibold small text-uppercase">Category</th>
+                        <th class="text-muted fw-semibold small text-uppercase">Description</th>
+                        <th class="text-end pe-4 text-muted fw-semibold small text-uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for part in parts %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="stat-icon-wrap bg-info bg-opacity-10 text-info" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">
+                                        <a href="{% url 'repairs:parts_detail' part.pk %}" class="text-decoration-none text-dark">
+                                        {{ part.name }}
+                                        </a>
+                                    </div>
+                                    <div class="text-muted small">ID: {{ part.id|part_id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border px-3 py-2">{{ part.category }}</span>
+                        </td>
+                        <td class="text-muted small">
+                            {{ part.description|truncatechars:30 }}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{% url 'repairs:parts_detail' part.pk %}" class="btn btn-sm btn-outline-secondary" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'repairs:parts_update' part.pk %}" class="btn btn-sm btn-outline-primary" title="Edit Part">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    {% include 'shared/paginator.html' %}
+
+
+</div>
+
+{% endblock %}

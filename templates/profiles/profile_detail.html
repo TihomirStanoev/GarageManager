@@ -62,7 +62,7 @@
                             Vehicles
                             <span class="badge bg-primary bg-opacity-10 text-primary ms-2">{{ profile.cars.count }}</span>
                         </h6>
-                        <a href="#" class="btn btn-sm btn-outline-success">
+                        <a href="{% url 'cars:filtered' %}?f=true" class="btn btn-sm btn-outline-success">
                             <i class="bi bi-plus-lg me-1"></i>Add Car
                         </a>
                     </div>

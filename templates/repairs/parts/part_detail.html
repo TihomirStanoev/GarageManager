@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load garage_simple_tags %}
+
+{% block content %}
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="avatar-circle bg-info bg-opacity-25 text-info rounded-circle d-flex align-items-center justify-content-center"
+                     style="width: 48px; height: 48px; font-size: 1.5rem;">
+                    <i class="bi bi-box-seam-fill"></i>
+                </div>
+                <div>
+                    <h1 class="h3 fw-bold mb-0">{{ part.name }}</h1>
+                    <small class="opacity-75">SKU: {{ part.id|part_id }} · {{ part.category }}</small>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'repairs:parts_update' part.pk %}" class="btn btn-warning btn-sm fw-semibold px-3">
+                    <i class="bi bi-pencil me-1"></i>Edit
+                </a>
+                <a href="{% url 'repairs:parts_delete' part.pk %}" class="btn btn-outline-danger btn-sm px-3">
+                    <i class="bi bi-trash me-1"></i>Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 rounded-4 shadow-sm mb-4 overflow-hidden">
+                <div class="card-body p-0">
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                        {% if part.image %}
+                        <img src="{{ part.image.url }}" 
+                             class="w-100 h-100" 
+                             alt="{{ part.name }}"
+                             style="object-fit: cover; object-position: center;">
+                        {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-image display-4 text-muted opacity-50"></i>
+                            <div class="small text-muted mt-2">No image available</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="card-body p-4">
+                    <h6 class="text-muted text-uppercase fw-semibold small mb-3">Part Specifications</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-center gap-3 py-2 border-bottom">
+                            <i class="bi bi-tag text-primary"></i>
+                            <div>
+                                <div class="small text-muted">Category</div>
+                                <div class="fw-semibold">{{ part.category }}</div>
+                            </div>
+                        </li>
+                        <li class="d-flex align-items-center gap-3 py-2 border-bottom">
+                            <i class="bi bi-calendar-check text-success"></i>
+                            <div>
+                                <div class="small text-muted">Added On</div>
+                                <div class="fw-semibold">{{ part.created_at|date:"M d, Y" }}</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card border-0 rounded-4 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h6 class="text-muted text-uppercase fw-semibold small mb-3">Description</h6>
+                    <p class="text-dark mb-0">
+                        {{ part.description }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Usage History (M2M Relationship Example) -->
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h6 class="text-muted text-uppercase fw-semibold small mb-0">
+                            Recent Usage in Repairs
+                            <span class="badge bg-primary bg-opacity-10 text-primary ms-2">2</span>
+                        </h6>
+                    </div>
+
+                    <!-- Usage List -->
+                    <div class="row g-3">
+                        <!-- Usage Item 1 -->
+                        <div class="col-12">
+                            <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="stat-icon-wrap bg-primary bg-opacity-10 text-primary">
+                                        <i class="bi bi-tools"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold">Repair of Audi A4 (CB 1234 AB)</div>
+                                        <div class="text-muted small">Oct 15, 2023 · Quantity: 1 set</div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <a href="#" class="btn btn-sm btn-link text-decoration-none p-0">View Repair</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Usage Item 2 -->
+                        <div class="col-12">
+                            <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="stat-icon-wrap bg-primary bg-opacity-10 text-primary">
+                                        <i class="bi bi-tools"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold">Repair of BMW 320i (CB 5678 XY)</div>
+                                        <div class="text-muted small">Sep 28, 2023 · Quantity: 1 set</div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <a href="#" class="btn btn-sm btn-link text-decoration-none p-0">View Repair</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -57,6 +57,12 @@ class CarList(ListView):
         return Car.objects.prefetch_related('owner')
 
 
+class CarListFiltered(CarList):
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(owner__isnull=True)
+
+
 class CarDetailView(DetailView):
     model = Car
     template_name = 'cars/car_detail.html'
