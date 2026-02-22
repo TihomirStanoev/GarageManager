@@ -4,9 +4,11 @@ from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
 
+from cars.models import Car
 from repairs.choices import StatusChoice
-from repairs.forms import CreatePartForm, UpdatePartForm, CreateRepairForm, UpdateRepairForm, RepairPartForm
-from repairs.models import Part, Repair
+from repairs.forms import CreatePartForm, UpdatePartForm, CreateRepairForm, UpdateRepairForm, RepairPartForm, \
+    CreateRepairWithCarForm
+from repairs.models import Part, Repair, RepairPart
 
 
 class CreatePartView(CreateView):
@@ -86,6 +88,15 @@ class RepairUpdateView(UpdateView):
     }
 
 
+class RepairDeleteView(DeleteView):
+    model = Repair
+    template_name = 'repairs/repairs/repair_delete.html'
+    success_url = reverse_lazy('repairs:repairs_list')
+    context_object_name = 'repair'
+    extra_context = {
+        'title': 'Delete Repair'
+    }
+
 
 
 class RepairListView(ListView):
@@ -139,8 +150,7 @@ class RepairDetailView(DetailView):
 
 def add_part_to_repair(request, repair_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
-    form = RepairPartForm(request.POST or None)
-
+    form = RepairPartForm(request.POST or None, initial={'repair': repair})
 
     if form.is_valid():
         try:
@@ -160,4 +170,35 @@ def add_part_to_repair(request, repair_pk):
     return render(request, 'repairs/repairs/repair_add_part.html', context)
 
 
+
+
+
+
+def create_repair_with_car(request, car_plate):
+    car = get_object_or_404(Car, plate=car_plate)
+    form = CreateRepairWithCarForm(request.POST or None, initial={'car': car})
+    context = {
+        'form': form,
+        'title': 'Create Repair',
+    }
+
+    if form.is_valid():
+        repair = form.save(commit=False)
+        repair.car = car
+        repair.save()
+        return redirect('repairs:repairs_detail', pk=repair.pk)
+
+    return render(request, 'repairs/repairs/repair_create.html', context)
+
+
+
+
+def delete_part_from_repair(request, repair_pk, part_pk):
+    repair = get_object_or_404(Repair, pk=repair_pk)
+    repair_part = get_object_or_404(RepairPart, pk=part_pk, repair=repair)
+
+
+    if request.method == 'POST':
+        repair_part.delete()
+    return redirect('repairs:repairs_detail', pk=repair_pk)
 

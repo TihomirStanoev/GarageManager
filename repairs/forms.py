@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
 from cars.models import Car
 from common.models import RepairPartMixin
@@ -94,6 +95,11 @@ class CreateRepairForm(BaseRepairForm):
         self.fields['car'].queryset = Car.objects.select_related('owner').filter(owner__isnull=False)
 
 
+class CreateRepairWithCarForm(CreateRepairForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['car'].disabled = True
+
 
 
 class UpdateRepairForm(BaseRepairForm):
@@ -110,3 +116,11 @@ class RepairPartForm(forms.ModelForm):
         model = RepairPart
         fields = ['part', 'quantity', 'price']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        initial = kwargs.get('initial', {})
+        repair = initial.get('repair', None)
+
+        if repair:
+            category = repair.category
+            self.fields['part'].queryset = Part.objects.filter(category=category)
