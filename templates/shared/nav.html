@@ -33,12 +33,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link rounded-2 px-3 {% if request.path == '/repairs/parts/' %}active{% endif %}" href="{% url 'repairs:parts_list' %}">
+                    <a class="nav-link rounded-2 px-3 {% if 'parts' in request.path %}active{% endif %}" href="{% url 'repairs:parts_list' %}">
                         <i class="bi bi-box-seam me-1"></i>Parts
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link rounded-2 px-3 {% if request.resolver_match.app_name == 'invoices' %}active{% endif %}" href="#">
+                    <a class="nav-link rounded-2 px-3 {% if 'invoices' in request.path %}active{% endif %}" href="{% url 'repairs:invoices_list' %}">
                         <i class="bi bi-receipt me-1"></i>Invoices
                     </a>
                 </li>

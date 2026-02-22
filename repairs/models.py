@@ -1,5 +1,7 @@
 import random
 from decimal import Decimal
+
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from cars.models import Car
@@ -61,6 +63,9 @@ class Repair(RepairPartMixin):
         through='RepairPart',
         related_name='repairs'
     )
+
+    is_invoiced = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f'{self.category} - {self.status}'
@@ -160,14 +165,15 @@ class Invoice(TimeStampedModel):
             self.invoice_number = self._generate_invoice_number()
 
         if not self.owner_id:
+            if not self.repair.car.owner:
+                raise ValidationError('Cannot create invoice for a car without an owner.')
             self.owner = self.repair.car.owner
 
-        if not self.total_amount:
+        if self.total_amount == 0:
             self.total_amount = self.repair.total_price
 
 
         super().save(*args, **kwargs)
-
 
 
     def __str__(self):

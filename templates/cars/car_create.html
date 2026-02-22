@@ -7,7 +7,7 @@
 {% block form_description %}Fill in the details below{% endblock %}
 
 {% block form_block %}
-    <form method="post" novalidate>
+    <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
         {{ form|crispy }}
         <div class="d-flex gap-3 mt-4">

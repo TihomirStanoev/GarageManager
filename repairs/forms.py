@@ -1,9 +1,14 @@
+from decimal import Decimal
+from unicodedata import category
+from wsgiref.validate import validator
+
 from django import forms
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 
 from cars.models import Car
 from common.models import RepairPartMixin
-from repairs.models import Part, Repair, RepairPart
+from repairs.models import Part, Repair, RepairPart, Invoice
 
 
 class BasePartForm(forms.ModelForm):
@@ -103,6 +108,17 @@ class CreateRepairWithCarForm(CreateRepairForm):
 
 
 class UpdateRepairForm(BaseRepairForm):
+    MIN_HOURS = Decimal('0.1')
+    MIN_HOURLY_RATE = Decimal('0.01')
+
+    labor_hours = forms.DecimalField(
+        validators=[MinValueValidator(MIN_HOURS, f'Minimum labor hours is {MIN_HOURS}.')]
+    )
+
+    price_per_labor_hour = forms.DecimalField(
+        validators=[MinValueValidator(MIN_HOURLY_RATE, f'Minimum hourly rate is {MIN_HOURLY_RATE} euros.')]
+    )
+
     class Meta(BaseRepairForm.Meta):
         exclude = ['car']
 
@@ -117,10 +133,8 @@ class RepairPartForm(forms.ModelForm):
         fields = ['part', 'quantity', 'price']
 
     def __init__(self, *args, **kwargs):
+        repair_category = kwargs.pop('repair_category', None)
         super().__init__(*args, **kwargs)
-        initial = kwargs.get('initial', {})
-        repair = initial.get('repair', None)
 
-        if repair:
-            category = repair.category
-            self.fields['part'].queryset = Part.objects.filter(category=category)
+        if repair_category:
+            self.fields['part'].queryset = Part.objects.filter(category=repair_category)

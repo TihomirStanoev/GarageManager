@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load garage_simple_tags %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card border-0 rounded-4 shadow-sm mx-auto" style="max-width: 800px;">
+        <div class="card-body p-5">
+
+            <div class="d-flex justify-content-between align-items-start mb-5">
+                <div>
+                    <h2 class="fw-black mb-1">{% site_name %}</h2>
+                    <p class="text-muted mb-0 small">Professional Auto Repair Management</p>
+                </div>
+                <div class="text-end">
+                    <div class="badge bg-warning text-dark px-3 py-2 mb-2 fs-6">INVOICE</div>
+                    <div class="fw-bold font-monospace text-primary fs-5">№{{ invoice.invoice_number }}</div>
+                    <div class="text-muted small">Issued: {{ invoice.created_at|date:"d M Y" }}</div>
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-6">
+                    <div class="text-muted small text-uppercase fw-semibold mb-2">Billed To</div>
+                    <div class="fw-bold fs-5">{{ invoice.owner }}</div>
+                    <div class="text-muted">{{ invoice.owner.email }}</div>
+                    <div class="text-muted">{{ invoice.owner.phone_number }}</div>
+                </div>
+                <div class="col-6 text-end">
+                    <div class="text-muted small text-uppercase fw-semibold mb-2">Vehicle</div>
+                    <div class="fw-bold">{{ invoice.repair.car.brand }} {{ invoice.repair.car.model }}</div>
+                    <div class="text-muted">{{ invoice.repair.car.plate }} · {{ invoice.repair.car.year }}</div>
+                    <div class="text-muted small">{{ invoice.repair.car.engine_type }}</div>
+                </div>
+            </div>
+
+            <div class="table-responsive mb-4">
+                <table class="table align-middle">
+                    <thead style="background: #f8f9fa; border-bottom: 2px solid #e9ecef;">
+                        <tr>
+                            <th class="text-muted fw-semibold small text-uppercase py-3">Description</th>
+                            <th class="text-center text-muted fw-semibold small text-uppercase">Qty</th>
+                            <th class="text-end text-muted fw-semibold small text-uppercase">Unit Price</th>
+                            <th class="text-end text-muted fw-semibold small text-uppercase pe-3">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-bottom">
+                            <td>
+                                <div class="fw-semibold">{{ invoice.repair.category }}</div>
+                                <div class="text-muted small">{{ invoice.repair.description }}</div>
+                            </td>
+                            <td class="text-center">{{ invoice.repair.labor_hours|floatformat:1 }} hrs</td>
+                            <td class="text-end">{{ invoice.repair.price_per_labor_hour|currency }} / hr</td>
+                            <td class="text-end fw-semibold pe-3">{{ invoice.repair.labor_price|currency }}</td>
+                        </tr>
+                        {% for part_entry in invoice.repair.part_entries.all %}
+                        <tr>
+                            <td>{{ part_entry.part.name }}</td>
+                            <td class="text-center">{{ part_entry.quantity }}</td>
+                            <td class="text-end">{{ part_entry.price|currency }}</td>
+                            <td class="text-end fw-semibold pe-3">{{ part_entry.parts_price|currency }}</td>
+                            {% empty %}
+                            <td colspan="4">No parts</td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end mb-5">
+                <div style="min-width: 280px;">
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Labor Cost</span>
+                        <span class="fw-semibold">{{ invoice.repair.labor_price|currency }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Parts Total</span>
+                        <span class="fw-semibold">{{ invoice.repair.parts_price|currency }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-3">
+                        <span class="fw-bold fs-5">Total Amount</span>
+                        <span class="fw-black fs-5 text-primary">{{ invoice.total_amount|currency }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-top pt-4 text-center text-muted small">
+                <p class="mb-1">Thank you for choosing {% site_name %}!</p>
+                <p class="mb-0">This is a computer-generated invoice and does not require a signature.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -106,15 +106,16 @@
                         <td class="text-end pe-4">
                             <div class="d-flex justify-content-end gap-2">
 
-                                {% if repair.status == 'Draft' %}
-                                    <form method="post" action="{% url 'repairs:repairs_list' %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="repair_id" value="{{ repair.pk }}">
-                                    <button class="btn btn-sm btn-warning">
-                                        <i class="bi bi-play-circle-fill"></i>
-                                    </button>
-                                    </form>
+                                {% if repair.status == 'In Progress' or repair.status == 'Draft' %}
+                                <form method="post" action="{% url 'repairs:repairs_list' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="repair_id" value="{{ repair.pk }}">
+                                <button class="btn btn-sm btn-warning">
+                                    <i class="bi bi-play-circle-fill"></i>
+                                </button>
+                                </form>
                                 {% endif %}
+
 
                                 <a href="{% url 'repairs:repairs_detail' repair.pk %}" class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-eye"></i>

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load garage_simple_tags %}
 
 {% block content %}
 <div class="container py-5">
@@ -21,7 +22,7 @@
                         <div>
                             <h4 class="fw-bold mb-0">Add Part</h4>
                             <small class="text-secondary">
-                                Repair #{{ repair.pk }} &mdash; {{ repair.car }}
+                                Repair {{ repair.pk|format_id }} - {{ repair.car }}
                             </small>
                         </div>
                     </div>

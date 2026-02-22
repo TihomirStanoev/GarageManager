@@ -5,10 +5,11 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
 
 from cars.models import Car
+from profiles.models import Profile
 from repairs.choices import StatusChoice
 from repairs.forms import CreatePartForm, UpdatePartForm, CreateRepairForm, UpdateRepairForm, RepairPartForm, \
     CreateRepairWithCarForm
-from repairs.models import Part, Repair, RepairPart
+from repairs.models import Part, Repair, RepairPart, Invoice
 
 
 class CreatePartView(CreateView):
@@ -81,11 +82,15 @@ class RepairUpdateView(UpdateView):
     model = Repair
     form_class = UpdateRepairForm
     template_name = 'repairs/repairs/repair_update.html'
-    success_url = reverse_lazy('repairs:repairs_list')
     context_object_name = 'repair'
     extra_context = {
         'title': 'Update Repair'
     }
+
+    def get_success_url(self):
+        repair_pk = self.object.pk
+        return reverse_lazy('repairs:repairs_detail', kwargs={'pk': repair_pk})
+
 
 
 class RepairDeleteView(DeleteView):
@@ -115,13 +120,15 @@ class RepairListView(ListView):
         match repair.status:
             case StatusChoice.DRAFT:
                 repair.status = StatusChoice.IN_PROGRESS
+            case StatusChoice.IN_PROGRESS:
+                repair.status = StatusChoice.COMPLETED
 
         repair.save()
         return redirect(reverse_lazy('repairs:repairs_list'))
 
 
     def get_queryset(self):
-        queryset = Repair.objects.prefetch_related('parts').select_related('car').order_by('-status')
+        queryset = Repair.objects.prefetch_related('parts').select_related('car').filter(is_invoiced=False).order_by('-status' , '-updated_at')
         q = self.request.GET.get('q')
         if q:
             query = Q(car__plate__icontains=q) | Q(car__owner__first_name__icontains=q) | Q(car__owner__last_name__icontains=q)
@@ -148,9 +155,46 @@ class RepairDetailView(DetailView):
     }
 
 
+class InvoiceListView(ListView):
+    model = Invoice
+    template_name = 'repairs/invoices/invoice_list.html'
+    context_object_name = 'invoices'
+    paginate_by = 8
+    extra_context = {
+        'title': 'Invoices'
+    }
+
+    def get_queryset(self):
+        queryset = Invoice.objects.select_related('repair', 'owner').order_by('-created_at')
+        q = self.request.GET.get('q')
+
+        if q:
+            query = (Q(repair__car__plate__icontains=q) |
+                     Q(repair__car__brand__icontains=q) |
+                     Q(repair__car__owner__first_name__icontains=q) |
+                     Q(repair__car__owner__last_name__icontains=q) |
+                     Q(invoice_number=q))
+
+            return queryset.filter(query)
+
+        return queryset
+
+
+class InvoiceDetailView(DetailView):
+    model = Invoice
+    template_name = 'repairs/invoices/invoice_detail.html'
+    context_object_name = 'invoice'
+    extra_context = {
+        'title': 'Invoice Details'
+    }
+
+
+
 def add_part_to_repair(request, repair_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
-    form = RepairPartForm(request.POST or None, initial={'repair': repair})
+    category = repair.category
+
+    form = RepairPartForm(request.POST or None, repair_category = category)
 
     if form.is_valid():
         try:
@@ -200,5 +244,17 @@ def delete_part_from_repair(request, repair_pk, part_pk):
 
     if request.method == 'POST':
         repair_part.delete()
+    return redirect('repairs:repairs_detail', pk=repair_pk)
+
+
+def create_invoice_view(request, repair_pk):
+    repair = get_object_or_404(Repair, pk=repair_pk)
+
+    if request.method == 'POST':
+        repair.is_invoiced = True
+        repair.save()
+        Invoice.objects.create(repair=repair)
+        return redirect('repairs:repairs_list')
+
     return redirect('repairs:repairs_detail', pk=repair_pk)
 
