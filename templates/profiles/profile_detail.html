@@ -125,7 +125,7 @@
                                     <td><span class="font-monospace text-primary small">{{ invoice.invoice_number }}</span></td>
                                     <td class="fw-semibold">{{ invoice.repair.category }}</td>
                                     <td class="text-muted small">{{ invoice.repair.car.brand_model }} · {{ invoice.repair.car.plate }}</td>
-                                    <td class="text-muted small">{{ invoice.repair.date_created|date:"Y-m-d" }}</td>
+                                    <td class="text-muted small">{{ invoice.repair.created_at|date:"Y-m-d" }}</td>
                                     <td class="text-end fw-bold">{{ invoice.total_amount|currency }}</td>
                                     <td class="text-end">
                                         <a href="{% url 'repairs:invoices_detail' invoice.pk %}" class="btn btn-sm btn-outline-info">

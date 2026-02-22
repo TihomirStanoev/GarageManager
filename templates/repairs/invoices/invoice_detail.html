@@ -59,10 +59,12 @@
                             <td class="text-center">{{ part_entry.quantity }}</td>
                             <td class="text-end">{{ part_entry.price|currency }}</td>
                             <td class="text-end fw-semibold pe-3">{{ part_entry.parts_price|currency }}</td>
-                            {% empty %}
-                            <td colspan="4">No parts</td>
-                            {% endfor %}
                         </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-muted text-center py-3">No parts</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

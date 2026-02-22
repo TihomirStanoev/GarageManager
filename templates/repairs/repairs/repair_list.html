@@ -126,7 +126,16 @@
                             </div>
                         </td>
                     </tr>
-                {% endfor %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="7">
+                                <div class="text-center py-4 d-none">
+                                    <i class="bi bi-box-seam display-6 opacity-25 d-block mb-2"></i>
+                                    <p class="text-muted">No repairs found.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
 
                 </tbody>
             </table>
