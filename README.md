@@ -1,10 +1,11 @@
-# GarageManager
+# 🚗 GarageManager 
 
 A Django-based web application for managing car repairs, clients, parts, and invoices for an auto repair shop.
 
 ---
+<img width="1828" height="906" alt="image" src="https://github.com/user-attachments/assets/452ec0e5-5efd-45ca-9b91-ca4d8ef9d151" />
 
-## Table of Contents
+## 📑 Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
@@ -18,7 +19,7 @@ A Django-based web application for managing car repairs, clients, parts, and inv
 
 ---
 
-## Overview
+## 📖 Overview
 
 GarageManager is a complete garage management system that allows a repair shop to:
 
@@ -30,7 +31,7 @@ GarageManager is a complete garage management system that allows a repair shop t
 
 ---
 
-## Features
+## ✨ Features
 
 ### Client Management
 - Create, update, and delete client profiles
@@ -78,7 +79,7 @@ GarageManager is a complete garage management system that allows a repair shop t
 
 ---
 
-## Tech Stack
+## ⚙️ Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -91,7 +92,7 @@ GarageManager is a complete garage management system that allows a repair shop t
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
 ```
 GarageManager/
@@ -149,7 +150,7 @@ GarageManager/
 
 ---
 
-## Data Models
+## 🗄️ Data Models
 
 ### Profile
 Represents a client of the garage.
@@ -249,7 +250,7 @@ A billing document generated from a repair.
 
 ---
 
-## Installation
+## 🛠️ Installation
 
 ### Prerequisites
 - Python 3.12+
@@ -284,7 +285,7 @@ python manage.py runserver
 
 ---
 
-## Configuration
+## 🪛 Configuration
 
 Create a `.env` file in the project root with the following variables:
 
@@ -297,7 +298,7 @@ SITE_NAME=GarageManager
 
 ---
 
-## URL Reference
+## 🔗 URL Reference
 
 ### Home
 | URL | View | Name |
@@ -354,7 +355,7 @@ SITE_NAME=GarageManager
 
 ---
 
-## Custom Template Tags
+## 🏷️ Custom Template Tags
 
 Load with `{% load garage_simple_tags %}` in templates.
 
