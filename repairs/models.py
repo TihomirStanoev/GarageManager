@@ -129,10 +129,10 @@ class Invoice(TimeStampedModel):
         editable=False,
     )
 
-    repair = models.ForeignKey(
+    repair = models.OneToOneField(
         to='Repair',
         on_delete=models.CASCADE,
-        related_name='invoices')
+        related_name='invoice')
 
     owner = models.ForeignKey(
         to='profiles.Profile',

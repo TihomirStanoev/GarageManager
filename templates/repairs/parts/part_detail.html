@@ -80,20 +80,17 @@
                     </p>
                 </div>
             </div>
-
-            <!-- Usage History (M2M Relationship Example) -->
             <div class="card border-0 rounded-4 shadow-sm">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h6 class="text-muted text-uppercase fw-semibold small mb-0">
                             Recent Usage in Repairs
-                            <span class="badge bg-primary bg-opacity-10 text-primary ms-2">2</span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary ms-2">{{ part.repairs.count }} </span>
                         </h6>
                     </div>
 
-                    <!-- Usage List -->
                     <div class="row g-3">
-                        <!-- Usage Item 1 -->
+                        {% for repair_entries in part.repair_entries.all %}
                         <div class="col-12">
                             <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light">
                                 <div class="d-flex align-items-center gap-3">
@@ -101,39 +98,20 @@
                                         <i class="bi bi-tools"></i>
                                     </div>
                                     <div>
-                                        <div class="fw-semibold">Repair of Audi A4 (CB 1234 AB)</div>
-                                        <div class="text-muted small">Oct 15, 2023 · Quantity: 1 set</div>
+                                        <div class="fw-semibold">Repair of {{ repair_entries.repair.car }}</div>
+                                        <div class="text-muted small">{{ repair_entries.repair.created_at|date:"M d, Y" }} · Quantity: {{ repair_entries.quantity }} set Price: {{ repair_entries.price|currency }}</div>
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <a href="#" class="btn btn-sm btn-link text-decoration-none p-0">View Repair</a>
+                                    <a href="{% url 'repairs:repairs_detail' repair_entries.repair.pk %}" class="btn btn-sm btn-link text-decoration-none p-0">View Repair</a>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Usage Item 2 -->
-                        <div class="col-12">
-                            <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="stat-icon-wrap bg-primary bg-opacity-10 text-primary">
-                                        <i class="bi bi-tools"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold">Repair of BMW 320i (CB 5678 XY)</div>
-                                        <div class="text-muted small">Sep 28, 2023 · Quantity: 1 set</div>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <a href="#" class="btn btn-sm btn-link text-decoration-none p-0">View Repair</a>
-                                </div>
-                            </div>
-                        </div>
+                    {% endfor %}
                     </div>
-                    
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 

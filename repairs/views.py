@@ -1,5 +1,5 @@
 from django.db import IntegrityError
-from django.db.models import Q
+from django.db.models import Q, Sum, Count
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
@@ -128,8 +128,9 @@ class RepairListView(ListView):
 
 
     def get_queryset(self):
-        queryset = Repair.objects.prefetch_related('parts').select_related('car').filter(is_invoiced=False).order_by('-status' , '-updated_at')
         q = self.request.GET.get('q')
+        queryset = Repair.objects.prefetch_related('parts').select_related('car').filter(is_invoiced=False).order_by('-status' , '-updated_at')
+
         if q:
             query = Q(car__plate__icontains=q) | Q(car__owner__first_name__icontains=q) | Q(car__owner__last_name__icontains=q)
             return queryset.filter(query)
