@@ -273,7 +273,7 @@ pip install -r requirements.txt
 
 # 4. Create .env file (see Configuration section)
 
-# 5. Apply migrations
+# 5. Apply migrations (also loads sample test data automatically)
 python manage.py migrate
 
 # 6. Create superuser (optional, for admin access)
@@ -282,6 +282,8 @@ python manage.py createsuperuser
 # 7. Run the development server
 python manage.py runserver
 ```
+
+> **Note:** Running `migrate` automatically loads sample test data — 3 clients, 5 cars, 8 parts, 5 repairs, and 1 invoice.
 
 ---
 
