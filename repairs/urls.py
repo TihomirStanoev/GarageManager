@@ -1,6 +1,4 @@
-from django.contrib import admin
 from django.urls import path, include
-
 from repairs import views
 
 app_name = 'repairs'

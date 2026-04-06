@@ -1,11 +1,10 @@
 from django.db import IntegrityError
-from django.db.models import Q, Sum, Count
+from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
 
 from cars.models import Car
-from profiles.models import Profile
 from repairs.choices import StatusChoice
 from repairs.forms import CreatePartForm, UpdatePartForm, CreateRepairForm, UpdateRepairForm, RepairPartForm, \
     CreateRepairWithCarForm
@@ -16,7 +15,7 @@ class CreatePartView(CreateView):
     model = Part
     form_class = CreatePartForm
     template_name = 'repairs/parts/part_create.html'
-    success_url = reverse_lazy('home:index')
+    success_url = reverse_lazy('repairs:parts_list')
     extra_context = {
         'title': 'Create Part'
     }
