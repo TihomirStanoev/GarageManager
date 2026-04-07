@@ -1,15 +1,18 @@
 import random
 from decimal import Decimal
-
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from cars.models import Car
-from common.models import RepairPartMixin, TimeStampedModel
+from common.managers import SoftDeleteManager
+from common.models import RepairPartMixin, TimeStampedModel, SoftDeletionMixin
 from repairs.choices import StatusChoice
 
 
-class Part(RepairPartMixin):
+class Part(SoftDeletionMixin, RepairPartMixin):
+    objects = SoftDeleteManager()
+    all_objects = models.Manager()
+
+
     name = models.CharField(
         max_length=50
     )
@@ -25,7 +28,11 @@ class Part(RepairPartMixin):
 
 
 
-class Repair(RepairPartMixin):
+class Repair(SoftDeletionMixin, RepairPartMixin):
+    objects = SoftDeleteManager()
+    all_objects = models.Manager()
+
+
     DEFAULT_LABOR_PRICE = Decimal('0.00')
 
 
@@ -66,9 +73,18 @@ class Repair(RepairPartMixin):
 
     is_invoiced = models.BooleanField(default=False)
 
+    def _validate_deletable(self):
+        if self.is_invoiced:
+            raise ValidationError('Cannot delete repair: an invoice has already been issued.')
 
-    def __str__(self):
-        return f'{self.category} - {self.status}'
+
+    def delete(self, *args, **kwargs):
+        self._validate_deletable()
+        super().delete(*args, **kwargs)
+
+    def hard_delete(self, *args, **kwargs):
+        self._validate_deletable()
+        super().hard_delete(*args, **kwargs)
 
 
     @property
@@ -131,14 +147,13 @@ class Invoice(TimeStampedModel):
 
     repair = models.OneToOneField(
         to='Repair',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='invoice')
 
     owner = models.ForeignKey(
         to='profiles.Profile',
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         related_name='invoices',
-        null=True, blank=True
     )
 
 
