@@ -1,10 +1,11 @@
+from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
-
 from cars.models import Car
-from profiles.models import Profile
 from repairs.choices import StatusChoice
 from repairs.models import Part, Repair, Invoice
 
+
+User = get_user_model()
 
 class IndexView(TemplateView):
     template_name = 'common/index.html'
@@ -13,7 +14,7 @@ class IndexView(TemplateView):
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['total_clients'] = Profile.objects.count()
+        kwargs['total_clients'] = User.objects.count()
         kwargs['total_cars'] = Car.objects.count()
         kwargs['total_parts'] = Part.objects.count()
         kwargs['total_repairs'] = Repair.objects.filter(status__in=[StatusChoice.DRAFT, StatusChoice.IN_PROGRESS]).count()

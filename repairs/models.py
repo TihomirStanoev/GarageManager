@@ -6,13 +6,10 @@ from django.db import models
 from common.managers import SoftDeleteManager
 from common.models import RepairPartMixin, TimeStampedModel, SoftDeletionMixin
 from repairs.choices import StatusChoice
+from django.conf import settings
 
 
 class Part(SoftDeletionMixin, RepairPartMixin):
-    objects = SoftDeleteManager()
-    all_objects = models.Manager()
-
-
     name = models.CharField(
         max_length=50
     )
@@ -22,6 +19,8 @@ class Part(SoftDeletionMixin, RepairPartMixin):
         null=True, blank=True
     )
 
+    objects = SoftDeleteManager()
+    all_objects = models.Manager()
 
     def __str__(self):
         return f'{self.name}'
@@ -29,10 +28,6 @@ class Part(SoftDeletionMixin, RepairPartMixin):
 
 
 class Repair(SoftDeletionMixin, RepairPartMixin):
-    objects = SoftDeleteManager()
-    all_objects = models.Manager()
-
-
     DEFAULT_LABOR_PRICE = Decimal('0.00')
 
 
@@ -72,6 +67,9 @@ class Repair(SoftDeletionMixin, RepairPartMixin):
     )
 
     is_invoiced = models.BooleanField(default=False)
+
+    objects = SoftDeleteManager()
+    all_objects = models.Manager()
 
     def _validate_deletable(self):
         if self.is_invoiced:
@@ -151,7 +149,7 @@ class Invoice(TimeStampedModel):
         related_name='invoice')
 
     owner = models.ForeignKey(
-        to='profiles.Profile',
+        to=settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name='invoices',
     )
