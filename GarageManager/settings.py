@@ -37,11 +37,12 @@ ALLOWED_HOSTS = []
 # Site name
 SITE_NAME = env('SITE_NAME')
 
+AUTH_USER_MODEL = 'accounts.User'
 
 # Application definition
 PROJECT_APPS = [
     'common',
-    'profiles',
+    'accounts',
     'cars',
     'repairs',
 ]
@@ -142,3 +143,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]

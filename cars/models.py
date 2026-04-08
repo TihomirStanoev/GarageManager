@@ -5,13 +5,9 @@ from cars.choices import BrandChoice, EngineChoice
 from cars.validators import ProductionYearValidator, PlateValidator
 from common.managers import SoftDeleteManager
 from common.models import TimeStampedModel, SoftDeletionMixin
-
+from django.conf import settings
 
 class Car(SoftDeletionMixin, TimeStampedModel):
-    objects = SoftDeleteManager()
-    all_objects = models.Manager()
-
-
     brand = models.CharField(
         max_length=30,
         choices=BrandChoice.choices
@@ -42,11 +38,16 @@ class Car(SoftDeletionMixin, TimeStampedModel):
     )
 
     owner = models.ForeignKey(
-        to='profiles.Profile',
+        to=settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         related_name='cars',
         null=True, blank=True
     )
+
+
+    objects = SoftDeleteManager()
+    all_objects = models.Manager()
+
 
     class Meta:
         ordering = ['brand', 'model']
