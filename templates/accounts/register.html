@@ -3,7 +3,7 @@
 
 
 {% block form_icon %}bi bi-person-plus-fill fs-4{% endblock %}
-{% block form_title %}Update Client{% endblock %}
+{% block form_title %}Create your account{% endblock %}
 {% block form_description %}Fill in the details below{% endblock %}
 
 {% block form_block %}
@@ -12,10 +12,10 @@
         {{ form|crispy }}
         <div class="d-flex gap-3 mt-4">
             <button type="submit" class="btn btn-primary px-4">
-                <i class="bi bi-check-lg me-2"></i>Update Client
+                <i class="bi bi-check-lg me-2"></i>Register
             </button>
-            <a href="#" class="btn btn-outline-secondary px-4">
-                <i class="bi bi-list-ul me-2"></i>Back Clients List
+            <a href="{% url 'home:index' %}" class="btn btn-outline-secondary px-4">
+                <i class="bi bi-list-ul me-2"></i>Back
             </a>
         </div>
     </form>

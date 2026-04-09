@@ -18,7 +18,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link rounded-2 px-3 {% if request.resolver_match.app_name == 'profiles' %}active{% endif %}" href="{% url 'profiles:list' %}">
+                    <a class="nav-link rounded-2 px-3" href="#">
                         <i class="bi bi-people me-1"></i>Clients
                     </a>
                 </li>
@@ -42,6 +42,17 @@
                         <i class="bi bi-receipt me-1"></i>Invoices
                     </a>
                 </li>
+                {% if user.is_authenticated %}
+                            <li class="nav-item">
+                            <form action="{% url 'accounts:logout' %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" value="Logout">
+                            </form>
+                    <a class="nav-link rounded-2 px-3 {% if 'invoices' in request.path %}active{% endif %}" href="{% url 'repairs:invoices_list' %}">
+                        <i class="bi bi-receipt me-1"></i>LOGOUT
+                    </a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </div>
