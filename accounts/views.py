@@ -6,7 +6,6 @@ from django.views.generic import FormView
 from accounts.forms import RegisterForm, LoginForm
 
 
-#RegisterView, LoginView, LogoutView
 
 
 

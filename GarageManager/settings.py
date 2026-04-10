@@ -150,3 +150,5 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_REDIRECT_URL = 'home:index'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
