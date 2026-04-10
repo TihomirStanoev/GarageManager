@@ -10,18 +10,20 @@
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span class="navbar-toggler-icon"></span>
         </button>
+
+
+
+
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav ms-auto gap-1">
+
                 <li class="nav-item">
                     <a class="nav-link rounded-2 px-3 {% if request.resolver_match.app_name == 'home' %}active{% endif %}" href="{% url 'home:index' %}">
                         <i class="bi bi-house-fill me-1"></i>Home
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link rounded-2 px-3" href="#">
-                        <i class="bi bi-people me-1"></i>Clients
-                    </a>
-                </li>
+
+            {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link rounded-2 px-3 {% if request.resolver_match.app_name == 'cars' %}active{% endif %}" href="{% url 'cars:list' %}">
                         <i class="bi bi-car-front me-1"></i>Cars
@@ -42,17 +44,31 @@
                         <i class="bi bi-receipt me-1"></i>Invoices
                     </a>
                 </li>
-                {% if user.is_authenticated %}
-                            <li class="nav-item">
-                            <form action="{% url 'accounts:logout' %}" method="post">
-                                {% csrf_token %}
-                                <input type="submit" value="Logout">
-                            </form>
-                    <a class="nav-link rounded-2 px-3 {% if 'invoices' in request.path %}active{% endif %}" href="{% url 'repairs:invoices_list' %}">
-                        <i class="bi bi-receipt me-1"></i>LOGOUT
+                <li class="nav-item">
+                    <a class="nav-link rounded-2 px-3" href="#">
+                        <i class="bi bi-person-circle me-1"></i>{{ user.get_full_name|default:user.email }}
                     </a>
                 </li>
-                {% endif %}
+                <li class="nav-item">
+                    <form method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link rounded-2 px-3 bg-transparent border-0">
+                            <i class="bi bi-box-arrow-right me-1"></i>Logout
+                        </button>
+                    </form>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link rounded-2 px-3 {% if request.resolver_match.app_name == 'accounts' and 'login' in request.path %}active{% endif %}" href="{% url 'accounts:login' %}">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-2 px-3 {% if 'register' in request.path %}active{% endif %}" href="{% url 'accounts:register' %}">
+                        <i class="bi bi-person-plus me-1"></i>Register
+                    </a>
+                </li>
+            {% endif %}
             </ul>
         </div>
     </div>

@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
@@ -8,7 +9,7 @@ from cars.models import Car
 
 
 
-class CreateCarView(CreateView):
+class CreateCarView(LoginRequiredMixin, CreateView):
     model = Car
     form_class = CreateCarForm
     template_name = 'cars/car_create.html'
@@ -17,7 +18,7 @@ class CreateCarView(CreateView):
         'title': 'Create Car'
     }
 
-class UpdateCarView(UpdateView):
+class UpdateCarView(LoginRequiredMixin, UpdateView):
     model = Car
     form_class = UpdateCarForm
     template_name = 'cars/car_update.html'
@@ -28,7 +29,7 @@ class UpdateCarView(UpdateView):
         'title': 'Update Car'
     }
 
-class DeleteCar(DeleteView):
+class DeleteCar(LoginRequiredMixin, DeleteView):
     model = Car
     template_name = 'cars/car_delete.html'
     slug_url_kwarg = 'plate'
@@ -39,7 +40,7 @@ class DeleteCar(DeleteView):
     }
 
 
-class CarList(ListView):
+class CarList(LoginRequiredMixin, ListView):
     model = Car
     template_name = 'cars/car_list.html'
     context_object_name = 'cars'
@@ -52,8 +53,8 @@ class CarList(ListView):
         q = self.request.GET.get('q')
         if q:
             query = Q(plate__icontains=q) | Q(model__icontains=q)
-            return Car.objects.prefetch_related('owner').filter(query)
-        return Car.objects.prefetch_related('owner')
+            return Car.objects.select_related('owner').filter(query)
+        return Car.objects.select_related('owner')
 
 
 class CarListFiltered(CarList):
@@ -62,7 +63,7 @@ class CarListFiltered(CarList):
         return qs.filter(owner__isnull=True)
 
 
-class CarDetailView(DetailView):
+class CarDetailView(LoginRequiredMixin, DetailView):
     model = Car
     template_name = 'cars/car_detail.html'
     context_object_name = 'car'

@@ -40,8 +40,6 @@ password_reset_urlpatterns = [
     ),
 ]
 
-
-
 urlpatterns = [
     path('', include(password_reset_urlpatterns)),
     path('register/', views.RegisterView.as_view(), name='register'),

@@ -37,6 +37,7 @@
 {% include 'repairs/repairs/cards.html' %}
     <div class="card border-0 rounded-4 shadow-sm">
         <div class="table-responsive">
+        {% if repairs %}
             <table class="table table-hover align-middle mb-0">
                 <thead style="background: #f8f9fa; border-bottom: 2px solid #e9ecef;">
                     <tr>
@@ -126,19 +127,17 @@
                             </div>
                         </td>
                     </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="7">
-                                <div class="text-center py-4 d-none">
-                                    <i class="bi bi-box-seam display-6 opacity-25 d-block mb-2"></i>
-                                    <p class="text-muted">No repairs found.</p>
-                                </div>
-                            </td>
-                        </tr>
                     {% endfor %}
 
                 </tbody>
             </table>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-tools fs-4 text-primary"></i>
+                    <h5 class="mt-3 text-muted">No repairs found</h5>
+                <p class="text-muted small">Try adjusting your search or add a new repair.</p>
+            </div>
+        {% endif %}
         </div>
     </div>
 

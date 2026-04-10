@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404, render
@@ -11,7 +13,7 @@ from repairs.forms import CreatePartForm, UpdatePartForm, CreateRepairForm, Upda
 from repairs.models import Part, Repair, RepairPart, Invoice
 
 
-class CreatePartView(CreateView):
+class CreatePartView(LoginRequiredMixin, CreateView):
     model = Part
     form_class = CreatePartForm
     template_name = 'repairs/parts/part_create.html'
@@ -20,7 +22,7 @@ class CreatePartView(CreateView):
         'title': 'Create Part'
     }
 
-class UpdatePartView(UpdateView):
+class UpdatePartView(LoginRequiredMixin, UpdateView):
     model = Part
     form_class = UpdatePartForm
     template_name = 'repairs/parts/part_update.html'
@@ -31,7 +33,7 @@ class UpdatePartView(UpdateView):
     }
 
 
-class DeletePartView(DeleteView):
+class DeletePartView(LoginRequiredMixin, DeleteView):
     model = Part
     template_name = 'repairs/parts/part_delete.html'
     success_url = reverse_lazy('repairs:parts_list')
@@ -41,7 +43,7 @@ class DeletePartView(DeleteView):
     }
 
 
-class PartListView(ListView):
+class PartListView(LoginRequiredMixin, ListView):
     model = Part
     template_name = 'repairs/parts/part_list.html'
     context_object_name = 'parts'
@@ -58,7 +60,7 @@ class PartListView(ListView):
         return Part.objects.all()
 
 
-class PartDetail(DetailView):
+class PartDetail(LoginRequiredMixin, DetailView):
     model = Part
     template_name = 'repairs/parts/part_detail.html'
     context_object_name = 'part'
@@ -67,7 +69,7 @@ class PartDetail(DetailView):
     }
 
 
-class RepairCreateView(CreateView):
+class RepairCreateView(LoginRequiredMixin, CreateView):
     model = Repair
     form_class = CreateRepairForm
     template_name = 'repairs/repairs/repair_create.html'
@@ -77,7 +79,7 @@ class RepairCreateView(CreateView):
     }
 
 
-class RepairUpdateView(UpdateView):
+class RepairUpdateView(LoginRequiredMixin, UpdateView):
     model = Repair
     form_class = UpdateRepairForm
     template_name = 'repairs/repairs/repair_update.html'
@@ -92,7 +94,7 @@ class RepairUpdateView(UpdateView):
 
 
 
-class RepairDeleteView(DeleteView):
+class RepairDeleteView(LoginRequiredMixin, DeleteView):
     model = Repair
     template_name = 'repairs/repairs/repair_delete.html'
     success_url = reverse_lazy('repairs:repairs_list')
@@ -103,7 +105,7 @@ class RepairDeleteView(DeleteView):
 
 
 
-class RepairListView(ListView):
+class RepairListView(LoginRequiredMixin, ListView):
     model = Repair
     template_name = 'repairs/repairs/repair_list.html'
     context_object_name = 'repairs'
@@ -146,7 +148,7 @@ class RepairListView(ListView):
         return context
 
 
-class RepairDetailView(DetailView):
+class RepairDetailView(LoginRequiredMixin, DetailView):
     model = Repair
     template_name = 'repairs/repairs/repair_detail.html'
     context_object_name = 'repair'
@@ -155,7 +157,7 @@ class RepairDetailView(DetailView):
     }
 
 
-class InvoiceListView(ListView):
+class InvoiceListView(LoginRequiredMixin, ListView):
     model = Invoice
     template_name = 'repairs/invoices/invoice_list.html'
     context_object_name = 'invoices'
@@ -180,7 +182,7 @@ class InvoiceListView(ListView):
         return queryset
 
 
-class InvoiceDetailView(DetailView):
+class InvoiceDetailView(LoginRequiredMixin, DetailView):
     model = Invoice
     template_name = 'repairs/invoices/invoice_detail.html'
     context_object_name = 'invoice'
@@ -189,7 +191,7 @@ class InvoiceDetailView(DetailView):
     }
 
 
-
+@login_required
 def add_part_to_repair(request, repair_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
     category = repair.category
@@ -217,7 +219,7 @@ def add_part_to_repair(request, repair_pk):
 
 
 
-
+@login_required
 def create_repair_with_car(request, car_plate):
     car = get_object_or_404(Car, plate=car_plate)
     form = CreateRepairWithCarForm(request.POST or None, initial={'car': car})
@@ -236,7 +238,7 @@ def create_repair_with_car(request, car_plate):
 
 
 
-
+@login_required
 def delete_part_from_repair(request, repair_pk, part_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
     repair_part = get_object_or_404(RepairPart, pk=part_pk, repair=repair)
@@ -246,7 +248,7 @@ def delete_part_from_repair(request, repair_pk, part_pk):
         repair_part.delete()
     return redirect('repairs:repairs_detail', pk=repair_pk)
 
-
+@login_required
 def create_invoice_view(request, repair_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
 
