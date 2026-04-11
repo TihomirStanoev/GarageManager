@@ -1,7 +1,7 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
+from accounts.mixins import GroupRequiredMixin, GroupFilterMixin
 from cars.forms import CreateCarForm, UpdateCarForm
 from cars.models import Car
 
@@ -9,7 +9,8 @@ from cars.models import Car
 
 
 
-class CreateCarView(LoginRequiredMixin, CreateView):
+class CreateCarView(GroupRequiredMixin, CreateView):
+    group_required = ['Manager']
     model = Car
     form_class = CreateCarForm
     template_name = 'cars/car_create.html'
@@ -18,7 +19,8 @@ class CreateCarView(LoginRequiredMixin, CreateView):
         'title': 'Create Car'
     }
 
-class UpdateCarView(LoginRequiredMixin, UpdateView):
+class UpdateCarView(GroupRequiredMixin, UpdateView):
+    group_required = ['Manager']
     model = Car
     form_class = UpdateCarForm
     template_name = 'cars/car_update.html'
@@ -29,7 +31,8 @@ class UpdateCarView(LoginRequiredMixin, UpdateView):
         'title': 'Update Car'
     }
 
-class DeleteCar(LoginRequiredMixin, DeleteView):
+class DeleteCar(GroupRequiredMixin, DeleteView):
+    group_required = ['Manager']
     model = Car
     template_name = 'cars/car_delete.html'
     slug_url_kwarg = 'plate'
@@ -40,7 +43,8 @@ class DeleteCar(LoginRequiredMixin, DeleteView):
     }
 
 
-class CarList(LoginRequiredMixin, ListView):
+class CarList(GroupFilterMixin, ListView):
+    group_filter = ['Manager', 'Mechanic']
     model = Car
     template_name = 'cars/car_list.html'
     context_object_name = 'cars'
@@ -50,20 +54,23 @@ class CarList(LoginRequiredMixin, ListView):
     }
 
     def get_queryset(self):
+        queryset = Car.objects.select_related('owner')
         q = self.request.GET.get('q')
+
+
+        if not self.in_groups:
+            query = Q(owner__pk=self.request.user.pk)
+            queryset = queryset.filter(query)
+
         if q:
             query = Q(plate__icontains=q) | Q(model__icontains=q)
-            return Car.objects.select_related('owner').filter(query)
-        return Car.objects.select_related('owner')
+            return queryset.filter(query)
+        return queryset
 
 
-class CarListFiltered(CarList):
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(owner__isnull=True)
 
-
-class CarDetailView(LoginRequiredMixin, DetailView):
+class CarDetailView(GroupFilterMixin, DetailView):
+    group_filter = ['Manager', 'Mechanic']
     model = Car
     template_name = 'cars/car_detail.html'
     context_object_name = 'car'
@@ -72,3 +79,8 @@ class CarDetailView(LoginRequiredMixin, DetailView):
     extra_context = {
         'title': 'Car Details'
     }
+
+    def get_queryset(self):
+        if self.in_groups:
+            return Car.objects.all()
+        return Car.objects.filter(owner = self.request.user)

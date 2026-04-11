@@ -80,7 +80,7 @@
                         </td>
                         <td>
                             {% if car.owner %}
-                            <a href="{% url 'profiles:detail' car.owner.pk %}" class="text-decoration-none fw-medium text-dark">{{ car.owner }}</a>
+                            <a href="#" class="text-decoration-none fw-medium text-dark">{{ car.owner }}</a>
                             {% else %}
                             <a href="{% url 'cars:update' car.plate %}" class="btn btn-sm btn-outline-primary">Add Owner</a>
                             {% endif %}

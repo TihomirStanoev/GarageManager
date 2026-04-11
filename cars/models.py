@@ -51,11 +51,7 @@ class Car(SoftDeletionMixin, TimeStampedModel):
 
     class Meta:
         ordering = ['brand', 'model']
-        permissions = [
-            ('approve_car', 'Can approve car'),
-            ('remove_car_owner', 'Can remove car owner'),
-            ('change_car_owner', 'Can change car owner')
-        ]
+
 
     @property
     def brand_model(self):

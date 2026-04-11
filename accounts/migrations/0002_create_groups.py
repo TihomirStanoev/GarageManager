@@ -7,9 +7,9 @@ GROUPS_PERMISSIONS = {
     'Manager': [{
         'content_type': 'car',
         'permissions': [
-            'approve_car',
-            'remove_car_owner',
-            'change_car_owner',
+            'add_car',
+            'change_car',
+            'delete_car',
         ]},
         {'content_type': 'repair',
         'permissions': [
@@ -44,6 +44,14 @@ GROUPS_PERMISSIONS = {
 def create_groups(apps, schema_editor):
     Group = apps.get_model('auth', 'Group')
     Permission = apps.get_model('auth', 'Permission')
+    ContentType = apps.get_model('contenttypes', 'ContentType')
+
+    from django.contrib.auth.management import create_permissions
+    from django.apps import apps as django_apps
+
+    for app_config in django_apps.get_app_configs():
+        create_permissions(app_config, apps=apps, verbosity=0)
+
 
     for group, types_and_permissions in GROUPS_PERMISSIONS.items():
         group_instance, _ = Group.objects.get_or_create(name=group)
@@ -69,8 +77,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('accounts', '0001_initial'),
-        ('cars', '0002_alter_car_options'),
-        ('repairs', '0002_alter_repair_options'),
+        ('cars', '0001_initial'),
+        ('repairs', '0001_initial'),
      #   ('invoices' '0001_initial')
     ]
 
