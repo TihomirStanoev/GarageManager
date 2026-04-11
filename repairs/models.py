@@ -71,6 +71,12 @@ class Repair(SoftDeletionMixin, RepairPartMixin):
     objects = SoftDeleteManager()
     all_objects = models.Manager()
 
+    class Meta:
+        permissions = [
+            ('change_repair_status', 'Can change repair status'),
+            ('change_repair_mechanic', 'Can change mechanic')
+        ]
+
     def _validate_deletable(self):
         if self.is_invoiced:
             raise ValidationError('Cannot delete repair: an invoice has already been issued.')
