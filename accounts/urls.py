@@ -40,9 +40,19 @@ password_reset_urlpatterns = [
     ),
 ]
 
+
+
+profile_urlpatterns = [
+    path('update/', views.UpdateProfileView.as_view(), name='update'),
+    path('<int:pk>/', views.ProfileDetailView.as_view(), name='profile'),
+    path('<int:pk>/toggle_active/', views.toggle_active, name='toggle_active'),
+]
+
 urlpatterns = [
     path('', include(password_reset_urlpatterns)),
     path('register/', views.RegisterView.as_view(), name='register'),
     path('login/', views.GarageLoginView.as_view(), name='login'),
     path('logout/', views.GarageLogoutView.as_view(), name='logout'),
+    path('profile/', include(profile_urlpatterns)),
+
 ]

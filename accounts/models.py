@@ -28,3 +28,14 @@ class User(AbstractUser):
     @property
     def profile_with_phone(self):
         return f'{self.first_name} {self.last_name} ({self.phone_number})'
+
+
+    def save(self, *args, **kwargs):
+        if self.first_name:
+            self.first_name = self.first_name.strip().capitalize()
+
+        if self.last_name:
+            self.last_name = self.last_name.strip().capitalize()
+
+        
+        super().save(*args, **kwargs)
