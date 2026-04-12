@@ -88,7 +88,7 @@ class RepairCreateView(GroupRequiredMixin, CreateView):
 
 
 class RepairUpdateView(GroupRequiredMixin, UpdateView):
-    group_required = ['Mechanic', 'Manager']
+    group_required = ['Manager']
     model = Repair
     form_class = UpdateRepairForm
     template_name = 'repairs/repairs/repair_update.html'
@@ -128,20 +128,24 @@ class RepairListView(GroupFilterMixin, ListView):
     def post(self, request, *args, **kwargs):
         repair_id = request.POST.get('repair_id')
         repair = Repair.objects.get(pk=repair_id)
+        status = repair.status
 
-        match repair.status:
+        match status:
             case StatusChoice.DRAFT:
                 repair.status = StatusChoice.IN_PROGRESS
             case StatusChoice.IN_PROGRESS:
-                repair.status = StatusChoice.COMPLETED
+                if repair.assigned_mechanics.all():
+                    repair.status = StatusChoice.COMPLETED
 
-        repair.save()
+        if repair.status != status:
+            repair.save()
+
         return redirect(reverse_lazy('repairs:repairs_list'))
 
 
     def get_queryset(self):
         q = self.request.GET.get('q')
-        queryset = (Repair.objects.prefetch_related('parts').select_related('car').
+        queryset = (Repair.objects.prefetch_related('parts', 'assigned_mechanics').select_related('car').
                     filter(is_invoiced=False).
                     order_by('-status' , '-updated_at'))
 
@@ -156,11 +160,13 @@ class RepairListView(GroupFilterMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        qs = context['repairs']
+        qs = self.get_queryset()
         context['active_count'] = qs.filter(status=StatusChoice.IN_PROGRESS).count()
         context['completed_count'] = qs.filter(status=StatusChoice.COMPLETED).count()
         context['drafted_count'] = qs.filter(status=StatusChoice.DRAFT).count()
         context['cancelled_count'] = qs.filter(status=StatusChoice.CANCELLED).count()
+        context['is_mechanic'] = 'Mechanic' in self.request.user.groups.values_list('name', flat=True)
+        context['is_manager'] = 'Manager' in self.request.user.groups.values_list('name', flat=True)
         return context
 
 
@@ -177,6 +183,13 @@ class RepairDetailView(GroupFilterMixin, DetailView):
         if self.in_groups:
             return Repair.objects.all()
         return Repair.objects.filter(car__owner=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['is_manager'] = 'Manager' in self.request.user.groups.values_list('name', flat=True)
+
+        return context
 
 
 class InvoiceListView(GroupFilterMixin, ListView):
@@ -223,7 +236,7 @@ class InvoiceDetailView(GroupFilterMixin, DetailView):
         return super().get_object(queryset=Invoice.objects.filter(owner=self.request.user))
 
 
-@group_required(['Mechanic', 'Manager'])
+@group_required('Mechanic', 'Manager')
 def add_part_to_repair(request, repair_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
     category = repair.category
@@ -251,7 +264,7 @@ def add_part_to_repair(request, repair_pk):
 
 
 
-@group_required(['Mechanic', 'Manager'])
+@group_required('Mechanic', 'Manager')
 def create_repair_with_car(request, car_plate):
     car = get_object_or_404(Car, plate=car_plate)
     form = CreateRepairWithCarForm(request.POST or None, initial={'car': car})
@@ -270,7 +283,7 @@ def create_repair_with_car(request, car_plate):
 
 
 
-@group_required(['Mechanic', 'Manager'])
+@group_required('Mechanic', 'Manager')
 def delete_part_from_repair(request, repair_pk, part_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
     repair_part = get_object_or_404(RepairPart, pk=part_pk, repair=repair)
@@ -280,7 +293,7 @@ def delete_part_from_repair(request, repair_pk, part_pk):
         repair_part.delete()
     return redirect('repairs:repairs_detail', pk=repair_pk)
 
-@group_required(['Manager'])
+@group_required('Manager')
 def create_invoice_view(request, repair_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
 
@@ -292,3 +305,18 @@ def create_invoice_view(request, repair_pk):
 
     return redirect('repairs:repairs_detail', pk=repair_pk)
 
+
+@group_required('Mechanic')
+def assign_unassign_repair_to_mechanic(request, repair_pk):
+    repair = get_object_or_404(Repair, pk=repair_pk)
+
+    if request.method == 'POST' and repair.status != StatusChoice.COMPLETED:
+        mechanic = request.user
+        repair_mechanics = repair.assigned_mechanics.all()
+
+        if mechanic not in repair_mechanics:
+            repair.assigned_mechanics.add(mechanic)
+        else:
+            repair.assigned_mechanics.remove(mechanic)
+
+    return redirect('repairs:repairs_list')

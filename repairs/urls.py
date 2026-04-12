@@ -20,6 +20,7 @@ repairs_patterns = [
     path('<int:pk>/update/', views.RepairUpdateView.as_view(), name='repairs_update'),
     path('<int:pk>/delete/', views.RepairDeleteView.as_view(), name='repairs_delete'),
     path('<int:repair_pk>/add_part/', views.add_part_to_repair, name='repairs_add_part'),
+    path('<int:repair_pk>/assign/', views.assign_unassign_repair_to_mechanic, name='assign_unassign_repair'),
     path('<int:repair_pk>/delete_part/<int:part_pk>/', views.delete_part_from_repair, name='repairs_delete_part'),
 ]
 

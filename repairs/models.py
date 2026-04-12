@@ -68,6 +68,12 @@ class Repair(SoftDeletionMixin, RepairPartMixin):
 
     is_invoiced = models.BooleanField(default=False)
 
+    assigned_mechanics = models.ManyToManyField(
+        to=settings.AUTH_USER_MODEL,
+        related_name='assigned_repairs',
+        blank=True
+    )
+
     objects = SoftDeleteManager()
     all_objects = models.Manager()
 
