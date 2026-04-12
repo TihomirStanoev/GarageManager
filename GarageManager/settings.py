@@ -52,7 +52,6 @@ ADDON_APPS = [
     'crispy_bootstrap5',
 ]
 
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -149,3 +148,7 @@ AUTHENTICATION_BACKENDS = [
     'accounts.backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+LOGIN_REDIRECT_URL = 'home:index'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

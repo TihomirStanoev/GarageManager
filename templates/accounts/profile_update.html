@@ -1,0 +1,27 @@
+{% extends 'shared/create_update_form.html' %}
+{% load crispy_forms_tags %}
+
+{% block form_icon %}bi bi-person-fill fs-4{% endblock %}
+{% block form_title %}Edit Profile{% endblock %}
+{% block form_description %}Update your personal details{% endblock %}
+
+{% block form_block %}
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <div class="d-flex gap-3 mt-4">
+                        <a href="{% url 'accounts:password_reset' %}" class="btn btn-outline-warning px-4">
+                <i class="bi bi-key me-1"></i>Change Password
+            </a>
+        </div>
+        <div class="d-flex gap-3 mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-check-lg me-2"></i>Save Changes
+            </button>
+            <a href="{% url 'accounts:profile' request.user.pk %}" class="btn btn-outline-secondary px-4">
+                <i class="bi bi-arrow-left me-1"></i>Back to Profile
+            </a>
+        </div>
+    </form>
+{% endblock %}

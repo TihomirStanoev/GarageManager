@@ -82,7 +82,7 @@
                                 <div class="small text-muted">Owner</div>
                                 <div class="fw-semibold">
                                     {% if car.owner %}
-                                        <a href="{% url 'profiles:detail' car.owner.pk %}" class="text-decoration-none">{{ car.owner.profile_with_phone }}</a>
+                                        <a href="{% url 'accounts:profile' car.owner.pk %}" class="text-decoration-none">{{ car.owner.profile_with_phone }}</a>
                                         {% else %}
                                         <a href="{% url 'cars:update' car.plate %}">
                                             Add Owner

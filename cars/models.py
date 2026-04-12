@@ -52,6 +52,7 @@ class Car(SoftDeletionMixin, TimeStampedModel):
     class Meta:
         ordering = ['brand', 'model']
 
+
     @property
     def brand_model(self):
         return f'{self.brand} {self.model}'

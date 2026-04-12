@@ -1,9 +1,13 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
 
+from accounts.decorators import group_required
+from accounts.mixins import GroupRequiredMixin, GroupFilterMixin
 from cars.models import Car
 from repairs.choices import StatusChoice
 from repairs.forms import CreatePartForm, UpdatePartForm, CreateRepairForm, UpdateRepairForm, RepairPartForm, \
@@ -11,7 +15,8 @@ from repairs.forms import CreatePartForm, UpdatePartForm, CreateRepairForm, Upda
 from repairs.models import Part, Repair, RepairPart, Invoice
 
 
-class CreatePartView(CreateView):
+class CreatePartView(GroupRequiredMixin, CreateView):
+    group_required = ['Mechanic', 'Manager']
     model = Part
     form_class = CreatePartForm
     template_name = 'repairs/parts/part_create.html'
@@ -20,7 +25,8 @@ class CreatePartView(CreateView):
         'title': 'Create Part'
     }
 
-class UpdatePartView(UpdateView):
+class UpdatePartView(GroupRequiredMixin, UpdateView):
+    group_required = ['Mechanic', 'Manager']
     model = Part
     form_class = UpdatePartForm
     template_name = 'repairs/parts/part_update.html'
@@ -31,7 +37,8 @@ class UpdatePartView(UpdateView):
     }
 
 
-class DeletePartView(DeleteView):
+class DeletePartView(GroupRequiredMixin, DeleteView):
+    group_required = ['Manager']
     model = Part
     template_name = 'repairs/parts/part_delete.html'
     success_url = reverse_lazy('repairs:parts_list')
@@ -41,7 +48,8 @@ class DeletePartView(DeleteView):
     }
 
 
-class PartListView(ListView):
+class PartListView(GroupRequiredMixin, ListView):
+    group_required = ['Mechanic', 'Manager']
     model = Part
     template_name = 'repairs/parts/part_list.html'
     context_object_name = 'parts'
@@ -58,7 +66,8 @@ class PartListView(ListView):
         return Part.objects.all()
 
 
-class PartDetail(DetailView):
+class PartDetail(GroupRequiredMixin, DetailView):
+    group_required = ['Mechanic', 'Manager']
     model = Part
     template_name = 'repairs/parts/part_detail.html'
     context_object_name = 'part'
@@ -67,7 +76,8 @@ class PartDetail(DetailView):
     }
 
 
-class RepairCreateView(CreateView):
+class RepairCreateView(GroupRequiredMixin, CreateView):
+    group_required = ['Mechanic', 'Manager']
     model = Repair
     form_class = CreateRepairForm
     template_name = 'repairs/repairs/repair_create.html'
@@ -77,7 +87,8 @@ class RepairCreateView(CreateView):
     }
 
 
-class RepairUpdateView(UpdateView):
+class RepairUpdateView(GroupRequiredMixin, UpdateView):
+    group_required = ['Mechanic', 'Manager']
     model = Repair
     form_class = UpdateRepairForm
     template_name = 'repairs/repairs/repair_update.html'
@@ -92,7 +103,8 @@ class RepairUpdateView(UpdateView):
 
 
 
-class RepairDeleteView(DeleteView):
+class RepairDeleteView(GroupRequiredMixin, DeleteView):
+    group_required = ['Manager']
     model = Repair
     template_name = 'repairs/repairs/repair_delete.html'
     success_url = reverse_lazy('repairs:repairs_list')
@@ -103,7 +115,8 @@ class RepairDeleteView(DeleteView):
 
 
 
-class RepairListView(ListView):
+class RepairListView(GroupFilterMixin, ListView):
+    group_filter = ['Mechanic', 'Manager']
     model = Repair
     template_name = 'repairs/repairs/repair_list.html'
     context_object_name = 'repairs'
@@ -128,7 +141,12 @@ class RepairListView(ListView):
 
     def get_queryset(self):
         q = self.request.GET.get('q')
-        queryset = Repair.objects.prefetch_related('parts').select_related('car').filter(is_invoiced=False).order_by('-status' , '-updated_at')
+        queryset = (Repair.objects.prefetch_related('parts').select_related('car').
+                    filter(is_invoiced=False).
+                    order_by('-status' , '-updated_at'))
+
+        if not self.in_groups:
+            queryset = queryset.filter(car__owner=self.request.user)
 
         if q:
             query = Q(car__plate__icontains=q) | Q(car__owner__first_name__icontains=q) | Q(car__owner__last_name__icontains=q)
@@ -138,7 +156,7 @@ class RepairListView(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        qs = self.get_queryset()
+        qs = context['repairs']
         context['active_count'] = qs.filter(status=StatusChoice.IN_PROGRESS).count()
         context['completed_count'] = qs.filter(status=StatusChoice.COMPLETED).count()
         context['drafted_count'] = qs.filter(status=StatusChoice.DRAFT).count()
@@ -146,7 +164,8 @@ class RepairListView(ListView):
         return context
 
 
-class RepairDetailView(DetailView):
+class RepairDetailView(GroupFilterMixin, DetailView):
+    group_filter = ['Mechanic', 'Manager']
     model = Repair
     template_name = 'repairs/repairs/repair_detail.html'
     context_object_name = 'repair'
@@ -154,8 +173,14 @@ class RepairDetailView(DetailView):
         'title': 'Repair Details'
     }
 
+    def get_queryset(self):
+        if self.in_groups:
+            return Repair.objects.all()
+        return Repair.objects.filter(car__owner=self.request.user)
 
-class InvoiceListView(ListView):
+
+class InvoiceListView(GroupFilterMixin, ListView):
+    group_filter = ['Manager']
     model = Invoice
     template_name = 'repairs/invoices/invoice_list.html'
     context_object_name = 'invoices'
@@ -167,6 +192,9 @@ class InvoiceListView(ListView):
     def get_queryset(self):
         queryset = Invoice.objects.select_related('repair', 'owner').order_by('-created_at')
         q = self.request.GET.get('q')
+
+        if not self.in_groups:
+            queryset = queryset.filter(owner=self.request.user)
 
         if q:
             query = (Q(repair__car__plate__icontains=q) |
@@ -180,7 +208,8 @@ class InvoiceListView(ListView):
         return queryset
 
 
-class InvoiceDetailView(DetailView):
+class InvoiceDetailView(GroupFilterMixin, DetailView):
+    group_filter = ['Manager']
     model = Invoice
     template_name = 'repairs/invoices/invoice_detail.html'
     context_object_name = 'invoice'
@@ -188,8 +217,13 @@ class InvoiceDetailView(DetailView):
         'title': 'Invoice Details'
     }
 
+    def get_object(self, queryset=None):
+        if self.in_groups:
+            return super().get_object(queryset=queryset)
+        return super().get_object(queryset=Invoice.objects.filter(owner=self.request.user))
 
 
+@group_required(['Mechanic', 'Manager'])
 def add_part_to_repair(request, repair_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
     category = repair.category
@@ -217,7 +251,7 @@ def add_part_to_repair(request, repair_pk):
 
 
 
-
+@group_required(['Mechanic', 'Manager'])
 def create_repair_with_car(request, car_plate):
     car = get_object_or_404(Car, plate=car_plate)
     form = CreateRepairWithCarForm(request.POST or None, initial={'car': car})
@@ -236,7 +270,7 @@ def create_repair_with_car(request, car_plate):
 
 
 
-
+@group_required(['Mechanic', 'Manager'])
 def delete_part_from_repair(request, repair_pk, part_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
     repair_part = get_object_or_404(RepairPart, pk=part_pk, repair=repair)
@@ -246,7 +280,7 @@ def delete_part_from_repair(request, repair_pk, part_pk):
         repair_part.delete()
     return redirect('repairs:repairs_detail', pk=repair_pk)
 
-
+@group_required(['Manager'])
 def create_invoice_view(request, repair_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
 
