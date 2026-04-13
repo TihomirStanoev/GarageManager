@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
 from cars.models import Car
+from invoices.models import Invoice
 from repairs.choices import StatusChoice
-from repairs.models import Part, Repair, Invoice
+from repairs.models import Part, Repair
 
 
 User = get_user_model()
