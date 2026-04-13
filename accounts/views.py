@@ -88,7 +88,7 @@ class ProfileListView(GroupRequiredMixin, ListView):
 
     def get_context_data(self,  **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_count'] = self.get_queryset().count()
+        context['user_count'] = self.object_list.count()
 
         return context
 

@@ -300,7 +300,7 @@ def create_invoice_view(request, repair_pk):
     if request.method == 'POST':
         repair.is_invoiced = True
         repair.save()
-        Invoice.objects.create(repair=repair)
+        Invoice.objects.create(repair=repair, owner=repair.car.owner)
         return redirect('repairs:repairs_list')
 
     return redirect('repairs:repairs_detail', pk=repair_pk)
