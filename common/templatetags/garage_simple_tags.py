@@ -19,3 +19,7 @@ def format_id(value):
 @register.filter
 def currency(value):
     return f'{value:.2f}€'
+
+@register.filter
+def is_in_group(user, group_name):
+    return group_name in user.groups.values_list('name', flat=True)

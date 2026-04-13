@@ -105,7 +105,11 @@
                             {{ repair.created_at|date:"Y-m-d" }}
                         </td>
                         <td class="text-end pe-4">
+
+
+
                             <div class="d-flex justify-content-end gap-2">
+                                {% if is_mechanic %}
 
                                 {% if repair.status == 'In Progress' or repair.status == 'Draft' %}
                                 <form method="post" action="{% url 'repairs:repairs_list' %}">
@@ -117,14 +121,32 @@
                                 </form>
                                 {% endif %}
 
+                                    {% if repair.status != 'Completed' %}
+                                        <form method="post" action="{% url 'repairs:assign_unassign_repair' repair.pk %}">
+                                        {% csrf_token %}
+                                            <button class="btn btn-sm {% if request.user in repair.assigned_mechanics.all %}btn-outline-secondary{% else %}btn-success{% endif %}">
+                                                {% if request.user in repair.assigned_mechanics.all %}
+                                                    <i class="bi bi-person-dash-fill"></i>
+                                                {% else %}
+                                                    <i class="bi bi-person-plus-fill"></i>
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                            {% endif %}
+
+
 
                                 <a href="{% url 'repairs:repairs_detail' repair.pk %}" class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-eye"></i>
                                 </a>
+                            {% if is_manager %}
                                 <a href="{% url 'repairs:repairs_update' repair.pk %}" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+                            {% endif %}
                             </div>
+
                         </td>
                     </tr>
                     {% endfor %}

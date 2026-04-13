@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load garage_simple_tags %}
 {% block content %}
 
 <div class="page-header">
@@ -30,6 +30,16 @@
                             <input type="submit" value="Activate" class="btn btn-outline-success btn-sm px-3">
                             {% endif %}
                     </form>
+                <form method="post" action="{% url 'accounts:toggle_role' user.pk %}">
+                    {% csrf_token %}
+                        <input type="hidden" name="role" value="Mechanic">
+                        <input type="submit" value="Mechanic" class="btn btn{% if not user|is_in_group:'Mechanic' %}-outline{% endif %}-success btn-sm px-3">
+                </form>
+                <form method="post" action="{% url 'accounts:toggle_role' user.pk %}">
+                {% csrf_token %}
+                    <input type="hidden" name="role" value="Manager">
+                    <input type="submit" value="Manager" class="btn btn{% if not user|is_in_group:'Manager' %}-outline{% endif %}-success btn-sm px-3">
+                </form>
                 {% endif %}
             </div>
         </div>

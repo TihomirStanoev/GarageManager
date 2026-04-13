@@ -1,10 +1,15 @@
 from decimal import Decimal
 from django import forms
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from cars.models import Car
 from common.models import RepairPartMixin
+from repairs.choices import StatusChoice
 from repairs.models import Part, Repair, RepairPart
 
+
+UserModel = get_user_model()
 
 class BasePartForm(forms.ModelForm):
     class Meta:
@@ -51,7 +56,7 @@ class UpdatePartForm(BasePartForm):
 class BaseRepairForm(forms.ModelForm):
     class Meta:
         model = Repair
-        fields = ['category', 'description', 'labor_hours', 'price_per_labor_hour', 'status','car']
+        fields = ['category', 'description', 'labor_hours', 'price_per_labor_hour', 'status','car', 'assigned_mechanics']
 
         widgets = {
             'category': forms.Select,
@@ -88,7 +93,7 @@ class BaseRepairForm(forms.ModelForm):
 
 class CreateRepairForm(BaseRepairForm):
     class Meta(BaseRepairForm.Meta):
-        exclude = ['status', 'parts', 'labor_hours']
+        exclude = ['status', 'parts', 'labor_hours', 'price_per_labor_hour', 'assigned_mechanics']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -120,6 +125,21 @@ class UpdateRepairForm(BaseRepairForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['category'].disabled = True
+        self.fields['assigned_mechanics'].queryset = UserModel.objects.filter(groups__name__contains='Mechanic')
+
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        status = cleaned_data.get('status')
+        assigned_mechanics = cleaned_data.get('assigned_mechanics')
+
+        if status == StatusChoice.COMPLETED and not assigned_mechanics:
+            self.add_error('assigned_mechanics', 'Please select one mechanic')
+
+        return cleaned_data
+
+
 
 
 class RepairPartForm(forms.ModelForm):
