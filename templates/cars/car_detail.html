@@ -105,10 +105,12 @@
                             Repair History
                             <span class="badge bg-primary bg-opacity-10 text-primary ms-2">{{ car.repairs.count }}</span>
                         </h6>
-                        {% if car.owner %}
+                        {% if car.owner  %}
+                            {% if request.user|is_in_group:'Manager' or request.user|is_in_group:'Mechanic' %}
                         <a href="{% url 'repairs:repairs_create_with_car' car.plate %}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-plus-lg me-1"></i>Add Repair
                         </a>
+                                {% endif %}
                         {% endif %}
                     </div>
 

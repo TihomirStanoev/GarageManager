@@ -127,7 +127,7 @@ class RepairListView(GroupFilterMixin, ListView):
 
     def post(self, request, *args, **kwargs):
         repair_id = request.POST.get('repair_id')
-        repair = Repair.objects.get(pk=repair_id)
+        repair = get_object_or_404(Repair, pk=repair_id)
         status = repair.status
 
         match status:
