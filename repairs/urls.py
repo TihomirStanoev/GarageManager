@@ -24,15 +24,8 @@ repairs_patterns = [
     path('<int:repair_pk>/delete_part/<int:part_pk>/', views.delete_part_from_repair, name='repairs_delete_part'),
 ]
 
-invoices_patterns = [
-    path('', views.InvoiceListView.as_view(), name='invoices_list'),
-    path('<int:repair_pk>/create/', views.create_invoice_view, name='invoices_create'),
-    path('<int:pk>/', views.InvoiceDetailView.as_view(), name='invoices_detail'),
-]
-
 urlpatterns = [
     path('', include(repairs_patterns)),
     path('parts/', include(parts_patterns)),
-    path('invoices/', include(invoices_patterns)),
 
 ]

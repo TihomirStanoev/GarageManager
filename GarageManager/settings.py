@@ -45,6 +45,7 @@ PROJECT_APPS = [
     'accounts',
     'cars',
     'repairs',
+    'invoices',
 ]
 
 ADDON_APPS = [

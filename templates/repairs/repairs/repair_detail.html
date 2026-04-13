@@ -21,7 +21,7 @@
     {% if not repair.is_invoiced  %}
         {% if is_manager %}
             {% if repair.status == 'Completed' and repair.total_price > 0 %}
-                <form method="post" action="{% url 'repairs:invoices_create' repair.pk %}">
+                <form method="post" action="{% url 'invoices:invoices_create' repair.pk %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary btn-sm fw-semibold px-3">Invoice</button>
                 </form>
@@ -34,7 +34,7 @@
                 </a>
         {% endif %}
     {% else %}
-        <a href="{% url 'repairs:invoices_detail' repair.invoice.pk %}" class="btn btn-warning btn-sm fw-semibold px-3">
+        <a href="{% url 'invoices:invoices_detail' repair.invoice.pk %}" class="btn btn-warning btn-sm fw-semibold px-3">
             <i class="bi bi-pencil me-1"></i>View Invoice
         </a>
     {% endif %}

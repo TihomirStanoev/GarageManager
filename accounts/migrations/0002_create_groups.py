@@ -79,7 +79,7 @@ class Migration(migrations.Migration):
         ('accounts', '0001_initial'),
         ('cars', '0001_initial'),
         ('repairs', '0001_initial'),
-     #   ('invoices' '0001_initial')
+        ('invoices', '0001_initial')
     ]
 
     operations = [

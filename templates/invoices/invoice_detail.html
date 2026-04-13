@@ -21,7 +21,7 @@
             <div class="row mb-5">
                 <div class="col-6">
                     <div class="text-muted small text-uppercase fw-semibold mb-2">Billed To</div>
-                    <div class="fw-bold fs-5">{{ invoice.owner }}</div>
+                    <div class="fw-bold fs-5">{{ invoice.owner.get_full_name }}</div>
                     <div class="text-muted">{{ invoice.owner.email }}</div>
                     <div class="text-muted">{{ invoice.owner.phone_number }}</div>
                 </div>
