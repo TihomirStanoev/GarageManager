@@ -51,6 +51,7 @@ PROJECT_APPS = [
 ADDON_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
+    'rest_framework',
 ]
 
 INSTALLED_APPS = [
