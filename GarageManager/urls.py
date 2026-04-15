@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 
 api_urlpatterns = [
     path('cars/', include('cars.api_urls')),
+    path('repairs/', include('repairs.api_urls')),
 ]
 
 urlpatterns = [
