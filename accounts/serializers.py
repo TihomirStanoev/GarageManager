@@ -9,3 +9,8 @@ class AccountsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ['id', 'email', 'first_name', 'last_name', 'phone_number']
+
+
+class RepairMechanicSerializer(AccountsSerializer):
+    class Meta(AccountsSerializer.Meta):
+        fields = ['first_name', 'last_name']

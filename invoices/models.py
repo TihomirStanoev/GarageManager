@@ -4,6 +4,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+
+from repairs.choices import StatusChoice
 from common.models import TimeStampedModel
 from repairs.models import Repair
 
@@ -30,8 +32,7 @@ class Invoice(TimeStampedModel):
     total_amount = models.DecimalField(
         max_digits=8,
         decimal_places=2,
-        default=0.00,
-        validators=[MinValueValidator(limit_value=Decimal('0.00'), message=f'Total amount cannot be negative.')]
+        validators=[MinValueValidator(limit_value=Decimal('0.01'), message=f'Total amount cannot be negative.')]
     )
 
     class Meta:
@@ -45,6 +46,14 @@ class Invoice(TimeStampedModel):
         return unique_ref
 
 
+    def clean(self):
+        super().clean()
+
+        if self.repair.status != StatusChoice.COMPLETED:
+            raise ValidationError('Cannot invoice a repair that is not yet completed.')
+
+
+
     def save(self, *args, **kwargs):
         if not self.invoice_number:
             self.invoice_number = self._generate_invoice_number()
@@ -54,7 +63,7 @@ class Invoice(TimeStampedModel):
                 raise ValidationError('Cannot create invoice for a car without an owner.')
             self.owner = self.repair.car.owner
 
-        if self.total_amount == 0:
+        if not self.total_amount:
             self.total_amount = self.repair.total_price
 
 

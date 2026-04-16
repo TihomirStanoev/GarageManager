@@ -1,10 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from cars.models import Car
-from repairs.models import Repair, Part
-
-
-
+from cars.serializers import CarSerializer
+from repairs.models import Repair, Part, RepairPart
 
 UserModel = get_user_model()
 
@@ -15,12 +13,16 @@ class PartSerializer(serializers.ModelSerializer):
 
 
 
+class RepairPartSerializer(serializers.ModelSerializer):
+    part = PartSerializer()
+    parts_price = serializers.ReadOnlyField()
+    class Meta:
+        model = RepairPart
+        fields = ['id', 'part', 'quantity', 'price', 'parts_price']
+
+
 
 class RepairBaseSerializer(serializers.ModelSerializer):
-    parts = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.all(),
-        many=True
-    )
     assigned_mechanics = serializers.PrimaryKeyRelatedField(
         queryset=UserModel.objects.all(),
         many=True,
@@ -38,9 +40,7 @@ class RepairBaseSerializer(serializers.ModelSerializer):
                   'labor_hours',
                   'price_per_labor_hour',
                   'car',
-                  'parts',
                   'assigned_mechanics',]
-
 
 
 
@@ -51,5 +51,28 @@ class RepairLimitedSerializer(RepairBaseSerializer):
                   'category',
                   'description',
                   'status',
+                  'car',]
+
+
+
+class RepairInvoiceSerializer(RepairBaseSerializer):
+    car = CarSerializer()
+    part_entries = RepairPartSerializer(
+        many=True,
+        read_only=True
+    )
+    parts_price = serializers.ReadOnlyField()
+    total_price = serializers.ReadOnlyField()
+
+    class Meta(RepairBaseSerializer.Meta):
+        fields = ['id',
+                  'category',
+                  'description',
                   'car',
-                  'parts',]
+                  'part_entries',
+                  'assigned_mechanics',
+                  'labor_hours',
+                  'price_per_labor_hour',
+                  'parts_price',
+                  'total_price',
+                  ]
