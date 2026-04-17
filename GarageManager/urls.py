@@ -19,6 +19,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('common.urls')),
@@ -27,6 +29,7 @@ urlpatterns = [
     path('repairs/', include('repairs.urls')),
 
     path('invoices/', include('invoices.urls')),
+    path('api/', include('GarageManager.api_urls')),
 ]
 
 if settings.DEBUG:

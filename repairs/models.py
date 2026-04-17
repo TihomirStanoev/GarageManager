@@ -108,6 +108,9 @@ class Repair(SoftDeletionMixin, RepairPartMixin):
     def total_price(self):
         return self.labor_price + self.parts_price
 
+    def __str__(self):
+        return f'{self.car.plate} - {self.car.owner.profile_with_phone} - {self.total_price:.2f}'
+
 
 
 

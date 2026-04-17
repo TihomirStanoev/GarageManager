@@ -1,0 +1,16 @@
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
+
+
+
+UserModel = get_user_model()
+
+class AccountsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ['id', 'email', 'first_name', 'last_name', 'phone_number']
+
+
+class RepairMechanicSerializer(AccountsSerializer):
+    class Meta(AccountsSerializer.Meta):
+        fields = ['first_name', 'last_name']
