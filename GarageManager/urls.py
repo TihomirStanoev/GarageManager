@@ -20,11 +20,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-api_urlpatterns = [
-    path('cars/', include('cars.api_urls')),
-    path('repairs/', include('repairs.api_urls')),
-    path('invoices/', include('invoices.api_urls')),
-]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,7 +29,7 @@ urlpatterns = [
     path('repairs/', include('repairs.urls')),
 
     path('invoices/', include('invoices.urls')),
-    path('api/', include(api_urlpatterns)),
+    path('api/', include('GarageManager.api_urls')),
 ]
 
 if settings.DEBUG:

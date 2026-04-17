@@ -4,6 +4,10 @@ Django==6.0.2
 django-crispy-forms==2.5
 django-environ==0.12.1
 djangorestframework==3.17.1
+djangorestframework_simplejwt==5.5.1
+future==1.0.0
 pillow==12.1.1
 psycopg2-binary==2.9.11
+PyJWT==2.12.1
+serializers==0.2.4
 sqlparse==0.5.5

@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from accounts.permissions import IsManager
@@ -15,6 +15,13 @@ class InvoiceListAPIView(ListAPIView):
     def get_queryset(self):
         return Invoice.objects.select_related('repair', 'owner').filter(owner = self.request.user)
 
+
+class InvoiceDetailAPIView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = InvoiceBaseSerializer
+
+    def get_queryset(self):
+        return Invoice.objects.select_related('repair', 'owner').filter(owner = self.request.user)
 
 class InvoiceManagerAPIView(ListCreateAPIView):
     serializer_class = InvoiceBaseSerializer
