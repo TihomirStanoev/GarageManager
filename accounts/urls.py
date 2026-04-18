@@ -1,7 +1,7 @@
 import django.contrib.auth.views as auth_views
 from django.urls import path, reverse_lazy, include
 from accounts import views
-
+from accounts.forms import GaragePasswordResetForm
 
 # Class-based password reset views
 # - PasswordResetView sends the mail
@@ -17,6 +17,7 @@ password_reset_urlpatterns = [
         auth_views.PasswordResetView.as_view(
             email_template_name = 'accounts/password_reset_email.html',
             template_name = 'accounts/password_reset_form.html',
+            form_class=GaragePasswordResetForm,
             subject_template_name = 'accounts/password_reset_subject.txt',
             success_url = reverse_lazy('accounts:password_reset_done'),),
         name='password_reset'),

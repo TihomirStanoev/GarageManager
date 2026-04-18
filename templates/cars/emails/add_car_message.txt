@@ -1,0 +1,17 @@
+{% autoescape off %}
+Hello {{first_name}},
+
+A new car has been successfully added to your account. Here are the details:
+
+  Brand:       {{brand}}
+  Model:       {{model}}
+  Plate:       {{plate}}
+  Year:        {{year}}
+  Engine Type: {{engine_type}}
+  Mileage:     {{mileage}} km
+
+If you did not request this or believe this was added in error, please contact our support team immediately.
+
+Best regards,
+The CarService Team
+{% endautoescape %}

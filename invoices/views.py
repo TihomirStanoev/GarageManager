@@ -1,7 +1,8 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.views.generic import ListView, DetailView
-
+from common.tasks import send_mail_async
 from accounts.decorators import group_required
 from accounts.mixins import GroupFilterMixin
 from invoices.models import Invoice
@@ -63,7 +64,25 @@ def create_invoice_view(request, repair_pk):
     if request.method == 'POST':
         repair.is_invoiced = True
         repair.save()
-        Invoice.objects.create(repair=repair, owner=repair.car.owner)
+        invoice = Invoice.objects.create(repair=repair, owner=repair.car.owner)
+
+        context = {
+            'car_plate': invoice.repair.car.plate,
+            'owner_name': invoice.owner.first_name,
+            'invoice_number': invoice.invoice_number,
+            'total_amount': invoice.total_amount,
+        }
+
+        subject = render_to_string('invoices/email/notification_subject.txt', context)
+        message = render_to_string('invoices/email/notification_message.txt', context)
+        recipient = [invoice.owner.email]
+
+        send_mail_async.delay(
+            subject=subject,
+            message=message,
+            recipient_list=recipient
+        )
+
         return redirect('repairs:repairs_list')
 
     return redirect('repairs:repairs_detail', pk=repair_pk)

@@ -3,27 +3,35 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
 from accounts.mixins import GroupRequiredMixin, GroupFilterMixin
 from cars.forms import CreateCarForm, UpdateCarForm
+from cars.mixins import CarNotificationMixin
 from cars.models import Car
 
 
 
 
-
-class CreateCarView(GroupRequiredMixin, CreateView):
+class CreateCarView(GroupRequiredMixin, CarNotificationMixin, CreateView):
     group_required = ['Manager']
     model = Car
     form_class = CreateCarForm
     template_name = 'cars/car_create.html'
+    template_add_car_owner_subject = 'cars/emails/add_car_subject.txt'
+    template_add_car_owner_message = 'cars/emails/add_car_message.txt'
     success_url = reverse_lazy('cars:list')
     extra_context = {
         'title': 'Create Car'
     }
 
-class UpdateCarView(GroupRequiredMixin, UpdateView):
+
+class UpdateCarView(GroupRequiredMixin, CarNotificationMixin, UpdateView):
     group_required = ['Manager']
     model = Car
     form_class = UpdateCarForm
     template_name = 'cars/car_update.html'
+    template_add_car_owner_subject = 'cars/emails/add_car_subject.txt'
+    template_add_car_owner_message = 'cars/emails/add_car_message.txt'
+    template_remove_car_owner_subject = 'cars/emails/remove_car_subject.txt'
+    template_remove_car_owner_message = 'cars/emails/remove_car_message.txt'
+
     slug_url_kwarg = 'plate'
     slug_field = 'plate'
     success_url = reverse_lazy('cars:list')

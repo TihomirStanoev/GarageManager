@@ -61,6 +61,10 @@ class Car(SoftDeletionMixin, TimeStampedModel):
 
     def _validate_deletable(self):
         is_invoiced = self.repairs.filter(is_invoiced=True).exists()
+        is_owned = self.owner
+
+        if is_owned:
+            raise ValidationError('Cannot delete car: cannot delete a car that has an owner assigned..')
 
         if is_invoiced:
             raise ValidationError('Cannot delete car: one or more repairs have already been invoiced.')

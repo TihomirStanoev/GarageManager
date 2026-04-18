@@ -1,0 +1,14 @@
+{% autoescape off %}
+Hello {{ owner_name }},
+
+A new invoice has been issued for your vehicle.
+
+  Invoice No.:  {{ invoice_number }}
+  Car Plate:    {{ car_plate }}
+  Total Amount: {{ total_amount }} €
+
+If you have any questions, please contact our support team.
+
+Best regards,
+The GarageManager Team
+{% endautoescape %}
