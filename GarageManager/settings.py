@@ -16,7 +16,11 @@ import os
 from datetime import timedelta
 
 env = environ.Env(
-    DEBUG=(bool, False)
+    DEBUG=(bool, False),
+    EMAIL_PORT=(int, 587),
+    EMAIL_USE_TLS=(bool, True),
+    ACCESS_TOKEN_LIFETIME=(int, 5),
+    REFRESH_TOKEN_LIFETIME=(int, 1),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -154,7 +158,6 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_REDIRECT_URL = 'home:index'
 
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DEFAULT_FROM_EMAIL = env('FROM_EMAIL')
 
@@ -165,20 +168,21 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=env('ACCESS_TOKEN_LIFETIME')),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=env('REFRESH_TOKEN_LIFETIME')),
 }
 
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = env('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
 
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'in-v3.mailjet.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 
 
-EMAIL_HOST_USER = '3996ddb54016b91d6c0bbc3932c454cb'
-EMAIL_HOST_PASSWORD = '3f2750fdad019bce9f883efe495e8426'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
