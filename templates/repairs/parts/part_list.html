@@ -48,7 +48,7 @@
                 </thead>
                 <tbody>
                 {% for part in parts %}
-                    <tr>
+                    <tr {% if request.user.is_staff and part.is_deleted %}class="table-danger opacity-75"{% endif %}>
                         <td class="ps-4">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="stat-icon-wrap bg-info bg-opacity-10 text-info" style="width: 40px; height: 40px;">
@@ -75,9 +75,11 @@
                                 <a href="{% url 'repairs:parts_detail' part.pk %}" class="btn btn-sm btn-outline-secondary" title="View Details">
                                     <i class="bi bi-eye"></i>
                                 </a>
+                                {% if not request.user.is_staff %}
                                 <a href="{% url 'repairs:parts_update' part.pk %}" class="btn btn-sm btn-outline-primary" title="Edit Part">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

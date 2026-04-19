@@ -1,0 +1,7 @@
+{% extends 'shared/error.html' %}
+{% load static %}
+
+{% block bg_url %}{% static 'images/400.jpg' %}{% endblock %}
+{% block error_number %}400{% endblock %}
+{% block error_message %}Bad Request{% endblock %}
+{% block error_description %}The server could not understand your request. Please check and try again.{% endblock %}

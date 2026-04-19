@@ -17,9 +17,11 @@
                 </div>
             </div>
             <div class="d-flex gap-2">
+                {% if not request.user.is_staff %}
                 <a href="{% url 'repairs:parts_update' part.pk %}" class="btn btn-warning btn-sm fw-semibold px-3">
                     <i class="bi bi-pencil me-1"></i>Edit
                 </a>
+                {% endif %}
 
                 {% include 'shared/delete_buttons/soft_delete_button.html' with obj=part delete_url='repairs:parts_delete' url_arg=part.pk %}
                 {% include 'shared/delete_buttons/hard_delete_button.html' with obj=part hard_delete_url='repairs:parts_hard_delete' url_arg=part.pk %}
@@ -92,24 +94,32 @@
                     </div>
 
                     <div class="row g-3">
-                        {% for repair_entries in part.repair_entries.all %}
+                        {% for entry in part.repair_entries.all %}
                         <div class="col-12">
                             <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div class="stat-icon-wrap bg-primary bg-opacity-10 text-primary">
+                                    <div class="stat-icon-wrap bg-warning bg-opacity-10 text-warning">
                                         <i class="bi bi-tools"></i>
                                     </div>
                                     <div>
-                                        <div class="fw-semibold">Repair of {{ repair_entries.repair.car }}</div>
-                                        <div class="text-muted small">{{ repair_entries.repair.created_at|date:"M d, Y" }} · Quantity: {{ repair_entries.quantity }} set Price: {{ repair_entries.price|currency }}</div>
+                                        <div class="fw-semibold">{{ entry.repair.car }}</div>
+                                        <div class="text-muted small">
+                                            {{ entry.repair.created_at|date:"M d, Y" }}
+                                            · Qty: {{ entry.quantity }}
+                                            · {{ entry.price|currency }}/unit
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="text-end">
-                                    <a href="{% url 'repairs:repairs_detail' repair_entries.repair.pk %}" class="btn btn-sm btn-link text-decoration-none p-0">View Repair</a>
+                                <div class="d-flex align-items-center gap-2">
+                                    <a href="{% url 'repairs:repairs_detail' entry.repair.pk %}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
+                        {% empty %}
+                        <p class="text-muted small fst-italic mb-0">This part has not been used in any repair yet.</p>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

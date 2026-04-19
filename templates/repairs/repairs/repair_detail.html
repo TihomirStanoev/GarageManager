@@ -19,11 +19,11 @@
 
             <div class="d-flex gap-2">
     {% if not repair.is_invoiced  %}
-        {% if is_manager or request.user.is_staff %}
+        {% if request.user|is_in_group:'Manager' or request.user.is_staff %}
             {% if repair.status == 'Completed' and repair.total_price > 0 %}
                 <form method="post" action="{% url 'invoices:invoices_create' repair.pk %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-primary btn-sm fw-semibold px-3">Invoice</button>
+                    <button type="submit" class="btn btn-primary btn-sm fw-semibold px-3">Create Invoice</button>
                 </form>
             {% endif %}
                 <a href="{% url 'repairs:repairs_update' repair.pk %}" class="btn btn-success btn-sm fw-semibold px-3">
@@ -36,7 +36,7 @@
 
         {% endif %}
     {% else %}
-        <a href="{% url 'invoices:invoices_detail' repair.invoice.pk %}" class="btn btn-warning btn-sm fw-semibold px-3">
+        <a href="{% url 'invoices:invoices_detail' repair.invoice.invoice_number %}" class="btn btn-warning btn-sm fw-semibold px-3">
             <i class="bi bi-pencil me-1"></i>View Invoice
         </a>
     {% endif %}
@@ -98,7 +98,17 @@
                     
                     <div class="d-flex align-items-center justify-content-between p-2">
                         <span class="text-muted small">Current Status:</span>
-                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">{{ repair.status }}</span>
+                        {% if repair.status == 'In Progress' %}
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="bi bi-hourglass-split me-1"></i>{{ repair.status }}</span>
+                        {% elif repair.status == 'Completed' %}
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill"><i class="bi bi-check-circle me-1"></i>{{ repair.status }}</span>
+                        {% elif repair.status == 'Draft' %}
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-3 py-2 rounded-pill"><i class="bi bi-pencil-square me-1"></i>{{ repair.status }}</span>
+                        {% elif repair.status == 'Cancelled' %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-2 rounded-pill"><i class="bi bi-x-circle me-1"></i>{{ repair.status }}</span>
+                        {% else %}
+                            <span class="badge bg-light text-dark px-3 py-2 rounded-pill">{{ repair.status }}</span>
+                        {% endif %}
                     </div>
                     <div class="d-flex align-items-center justify-content-between p-2 border-top">
                         <span class="text-muted small">Category:</span>
@@ -122,9 +132,13 @@
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <h6 class="text-muted text-uppercase fw-semibold small mb-0">Parts & Materials</h6>
-                        <a href="{% url 'repairs:repairs_add_part' repair.pk %}" class="btn btn-sm btn-success px-3 rounded-pill">
-                            <i class="bi bi-plus-lg me-1"></i>Add Part
-                        </a>
+                        {% if request.user|is_in_group:'Manager' or request.user|is_in_group:'Mechanic' %}
+                            {% if not repair.is_invoiced %}
+                                <a href="{% url 'repairs:repairs_add_part' repair.pk %}" class="btn btn-sm btn-success px-3 rounded-pill">
+                                    <i class="bi bi-plus-lg me-1"></i>Add Part
+                                </a>
+                            {% endif %}
+                        {% endif %}
                     </div>
 
                     <div class="table-responsive">
@@ -149,12 +163,16 @@
                                     <td class="text-end">{{ entry.price|currency }}</td>
                                     <td class="text-end fw-bold px-3">{{ entry.parts_price|currency }}</td>
                                     <td class="text-end fw-bold px-1">
-                                        <form method="post" action="{% url 'repairs:repairs_delete_part' repair.pk entry.pk %}">
-                                            {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                        </form>
+                                        {% if request.user|is_in_group:'Manager' or request.user|is_in_group:'Mechanic' %}
+                                            {% if not repair.is_invoiced %}
+                                                <form method="post" action="{% url 'repairs:repairs_delete_part' repair.pk entry.pk %}">
+                                                    {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-danger border-0">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                                </form>
+                                                {% endif %}
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -166,6 +184,38 @@
                         <i class="bi bi-box-seam display-6 opacity-25 d-block mb-2"></i>
                         <p class="text-muted">No parts added to this repair yet.</p>
                     </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-0">
+        <div class="col-12">
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h6 class="text-muted text-uppercase fw-semibold small mb-0">
+                            Assigned Mechanics
+                            <span class="badge bg-primary bg-opacity-10 text-primary ms-2">{{ repair.assigned_mechanics.count }}</span>
+                        </h6>
+                    </div>
+                    {% if repair.assigned_mechanics.exists %}
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for mechanic in repair.assigned_mechanics.all %}
+                        <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3 bg-light">
+                            <div class="stat-icon-wrap bg-primary bg-opacity-10 text-primary" style="width: 32px; height: 32px; font-size: 0.85rem;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold small">{{ mechanic.get_full_name }}</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">{{ mechanic.email }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted small mb-0 fst-italic">No mechanics assigned to this repair.</p>
                     {% endif %}
                 </div>
             </div>

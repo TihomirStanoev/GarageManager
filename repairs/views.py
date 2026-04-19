@@ -188,15 +188,15 @@ class RepairListView(GroupFilterMixin, ListView):
     def get_queryset(self):
         if self.request.user.is_staff:
             queryset = (Repair.all_objects.prefetch_related('parts', 'assigned_mechanics').select_related('car').
-                        filter(is_invoiced=False).
+                        filter().
                         order_by('-status', '-updated_at'))
         elif self.in_groups:
             queryset = (Repair.objects.prefetch_related('parts', 'assigned_mechanics').select_related('car').
-                    filter(is_invoiced=False).
+                    filter().
                     order_by('-status' , '-updated_at'))
         else:
             queryset = (Repair.objects.prefetch_related('parts', 'assigned_mechanics').select_related('car').
-                    filter(is_invoiced=False).
+                    filter().
                     order_by('-status' , '-updated_at')
                         .filter(car__owner=self.request.user))
 
@@ -236,12 +236,6 @@ class RepairDetailView(GroupFilterMixin, DetailView):
             return Repair.objects.all()
         return Repair.objects.filter(car__owner=self.request.user)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['is_manager'] = 'Manager' in self.request.user.groups.values_list('name', flat=True)
-
-        return context
 
 
 
@@ -250,7 +244,10 @@ class RepairDetailView(GroupFilterMixin, DetailView):
 @group_required('Mechanic', 'Manager')
 def add_part_to_repair(request, repair_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
+    if repair.is_invoiced:
+        return redirect('repairs:repairs_detail', pk=repair_pk)
     category = repair.category
+
 
     form = RepairPartForm(request.POST or None, repair_category = category)
 
@@ -297,6 +294,10 @@ def create_repair_with_car(request, car_plate):
 @group_required('Mechanic', 'Manager')
 def delete_part_from_repair(request, repair_pk, part_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
+
+    if repair.is_invoiced:
+        return redirect('repairs:repairs_detail', pk=repair_pk)
+
     repair_part = get_object_or_404(RepairPart, pk=part_pk, repair=repair)
 
 

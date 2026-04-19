@@ -1,27 +1,7 @@
-{% extends 'base.html' %}
+{% extends 'shared/error.html' %}
 {% load static %}
 
-{% block extra_css %}
-<style>
-    main { background: #0f172a; display: flex; flex-direction: column; }
-</style>
-{% endblock %}
-
-{% block content %}<!-- {% static 'images/404.jpeg' %} -->
-<div class="d-flex align-items-center justify-content-center position-relative overflow-hidden" style="flex: 1;">
-    <div style="position: absolute; inset: 0; background-image: url('{% static 'images/404.jpeg' %}'); background-size: cover; background-position: center; filter: blur(3px) brightness(0.3); transform: scale(1.05);"></div>
-    <div class="position-relative text-center px-4">
-        <div class="mb-2">
-            <i class="bi bi-cone-striped" style="font-size: 5rem; opacity: 0.15; color: white;"></i>
-        </div>
-        <div class="fw-black mb-3" style="font-size: 8rem; line-height: 1; background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">404</div>
-        <h1 class="text-white fw-bold mb-2">Page Not Found</h1>
-        <p class="mb-4" style="color: rgba(255,255,255,0.55); max-width: 400px; margin: 0 auto 2rem;">
-            The page you're looking for doesn't exist or has been moved.
-        </p>
-        <a href="/" class="btn btn-warning btn-lg px-4 rounded-3 fw-semibold">
-            <i class="bi bi-house me-2"></i>Back to Home
-        </a>
-    </div>
-</div>
-{% endblock %}
+{% block bg_url %}{% static 'images/404.jpg' %}{% endblock %}
+{% block error_number %}404{% endblock %}
+{% block error_message %}Page Not Found{% endblock %}
+{% block error_description %}The page you're looking for doesn't exist or has been moved.{% endblock %}

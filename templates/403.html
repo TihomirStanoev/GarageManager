@@ -1,0 +1,7 @@
+{% extends 'shared/error.html' %}
+{% load static %}
+
+{% block bg_url %}{% static 'images/403.jpg' %}{% endblock %}
+{% block error_number %}403{% endblock %}
+{% block error_message %}Access Forbidden{% endblock %}
+{% block error_description %}You don't have permission to access this page.{% endblock %}

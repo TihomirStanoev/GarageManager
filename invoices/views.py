@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
@@ -39,7 +40,7 @@ class InvoiceListView(GroupFilterMixin, ListView):
 
 
 class InvoiceDetailView(GroupFilterMixin, DetailView):
-    group_filter = ['Manager']
+    group_filter = ['Manager', 'Mechanic']
     model = Invoice
     slug_field = 'invoice_number'
     template_name = 'invoices/invoice_detail.html'
@@ -62,6 +63,11 @@ def create_invoice_view(request, repair_pk):
     repair = get_object_or_404(Repair, pk=repair_pk)
 
     if request.method == 'POST':
+        if not repair.labor_hours or not repair.price_per_labor_hour:
+            messages.error(request, 'Cannot create invoice: labor hours and price per labor hour must be filled in. Use "Update Status and Hours" to fill them in.')
+            return redirect('repairs:repairs_detail', pk=repair_pk)
+
+
         repair.is_invoiced = True
         repair.save()
         invoice = Invoice.objects.create(repair=repair, owner=repair.car.owner)
@@ -83,6 +89,6 @@ def create_invoice_view(request, repair_pk):
             recipient_list=recipient
         )
 
-        return redirect('repairs:repairs_list')
+        return redirect('invoices:invoices_detail', slug=invoice.invoice_number)
 
     return redirect('repairs:repairs_detail', pk=repair_pk)

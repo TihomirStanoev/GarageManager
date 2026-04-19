@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
-
+{% load garage_simple_tags %}
 {% block content %}
 
 <div class="page-header">
@@ -34,9 +34,11 @@
                         </button>
                     </div>
                 </form>
+                {% if request.user|is_in_group:'Manager' %}
                 <a href="{% url 'cars:create' %}" class="btn btn-warning fw-semibold">
                     <i class="bi bi-plus-lg me-2"></i>Add Car
                 </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -59,7 +61,7 @@
                 </thead>
                 <tbody>
                 {% for car in cars %}
-                    <tr>
+                    <tr {% if request.user.is_staff and car.is_deleted %}class="table-danger opacity-75"{% endif %}>
                         <td class="ps-4">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="stat-icon-wrap bg-success bg-opacity-10 text-success" style="width: 40px; height: 40px;">
@@ -82,9 +84,10 @@
                             {% if car.owner %}
                             <a href="#" class="text-decoration-none fw-medium text-dark">{{ car.owner }}</a>
                             {% else %}
-                            <a href="{% url 'cars:update' car.plate %}" class="btn btn-sm btn-outline-primary">Add Owner</a>
+                                {% if request.user|is_in_group:'Manager' %}
+                                    <a href="{% url 'cars:update' car.plate %}" class="btn btn-sm btn-outline-primary">Add Owner</a>
+                                {% endif %}
                             {% endif %}
-                            {{ car.is_owner }}
                         </td>
                         <td class="text-muted">{{ car.year }}</td>
                         <td><span class="badge bg-light text-dark border">{{ car.engine_type }}</span></td>
@@ -92,9 +95,11 @@
                             <a href="{% url 'cars:detail' car.plate %}" class="btn btn-sm btn-outline-secondary me-1">
                                 <i class="bi bi-eye"></i>
                             </a>
+                            {% if not car.is_deleted and request.user|is_in_group:'Manager'%}
                             <a href="{% url 'cars:update' car.plate %}" class="btn btn-sm btn-outline-primary me-1">
                                 <i class="bi bi-pencil"></i>
                             </a>
+                            {% endif %}
                         </td>
                     </tr>
                 </tbody>

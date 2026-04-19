@@ -1,21 +1,14 @@
+{% load garage_simple_tags %}
+
+{% if request.user|is_in_group:'Manager' or request.user|is_in_group:'Mechanic' %}
 <section class="pb-5">
     <div class="container">
         <div class="d-flex align-items-center mb-4">
             <h2 class="fw-bold mb-0">Quick Actions</h2>
             <div class="flex-grow-1 ms-3 border-bottom border-2"></div>
         </div>
-        <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-xl-5">
-            <div class="col">
-                <a href="#" class="card border-0 rounded-4 text-decoration-none action-card h-100 shadow-sm">
-                    <div class="card-body text-center p-4">
-                        <div class="action-icon-wrap bg-primary bg-opacity-10 text-primary mx-auto mb-3">
-                            <i class="bi bi-person-plus-fill fs-2"></i>
-                        </div>
-                        <h6 class="fw-semibold text-dark mb-1">Add Client</h6>
-                        <small class="text-muted">Register a new customer</small>
-                    </div>
-                </a>
-            </div>
+        <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-xl-5 justify-content-center">
+            {% if request.user|is_in_group:'Manager' %}
             <div class="col">
                 <a href="{% url 'cars:create' %}" class="card border-0 rounded-4 text-decoration-none action-card h-100 shadow-sm">
                     <div class="card-body text-center p-4">
@@ -27,6 +20,7 @@
                     </div>
                 </a>
             </div>
+            {% endif %}
             <div class="col">
                 <a href="{% url 'repairs:repairs_create' %}" class="card border-0 rounded-4 text-decoration-none action-card h-100 shadow-sm">
                     <div class="card-body text-center p-4">
@@ -49,6 +43,7 @@
                     </div>
                 </a>
             </div>
+            {% if request.user|is_in_group:'Manager' %}
             <div class="col">
                 <a href="{% url 'invoices:invoices_list' %}" class="card border-0 rounded-4 text-decoration-none action-card h-100 shadow-sm">
                     <div class="card-body text-center p-4">
@@ -60,6 +55,8 @@
                     </div>
                 </a>
             </div>
+            {% endif %}
         </div>
     </div>
 </section>
+{% endif %}

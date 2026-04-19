@@ -1,0 +1,7 @@
+{% extends 'shared/error.html' %}
+{% load static %}
+
+{% block bg_url %}{% static 'images/500.jpg' %}{% endblock %}
+{% block error_number %}500{% endblock %}
+{% block error_message %}Server Error{% endblock %}
+{% block error_description %}Something went wrong on our end. Please try again in a moment.{% endblock %}
