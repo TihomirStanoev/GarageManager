@@ -1,0 +1,5 @@
+{% extends 'shared/restore_form.html' %}
+
+{% block obj %}{{ car }}{% endblock %}
+
+{% block back_url_block %}{% url 'cars:detail' car.plate %}{% endblock %}

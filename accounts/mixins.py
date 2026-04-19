@@ -8,8 +8,12 @@ class GroupRequiredMixin(AccessMixin):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
 
+
+        if request.user.is_staff:
+            return super().dispatch(request, *args, **kwargs)
+
         user_groups = request.user.groups.values_list('name', flat=True)
-        if not any(group in user_groups for group in self.group_required):
+        if request.user.is_staff or not any(group in user_groups for group in self.group_required):
             return self.handle_no_permission()
 
         return super().dispatch(request, *args, **kwargs)

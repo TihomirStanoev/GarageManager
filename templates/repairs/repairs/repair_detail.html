@@ -19,7 +19,7 @@
 
             <div class="d-flex gap-2">
     {% if not repair.is_invoiced  %}
-        {% if is_manager %}
+        {% if is_manager or request.user.is_staff %}
             {% if repair.status == 'Completed' and repair.total_price > 0 %}
                 <form method="post" action="{% url 'invoices:invoices_create' repair.pk %}">
                     {% csrf_token %}
@@ -29,9 +29,11 @@
                 <a href="{% url 'repairs:repairs_update' repair.pk %}" class="btn btn-success btn-sm fw-semibold px-3">
                     <i class="bi bi-pencil me-1"></i>Update Status and Hours
                 </a>
-                <a href="{% url 'repairs:repairs_delete' repair.pk %}" class="btn btn-danger btn-sm fw-semibold px-3">
-                    <i class="bi bi-pencil me-1"></i>Delete Repair
-                </a>
+
+                {% include 'shared/delete_buttons/soft_delete_button.html' with obj=repair delete_url='repairs:repairs_delete' url_arg=repair.pk %}
+                {% include 'shared/delete_buttons/hard_delete_button.html' with obj=repair hard_delete_url='repairs:repairs_hard_delete' url_arg=repair.pk %}
+                {% include 'shared/delete_buttons/restore_button.html' with obj=repair restore_url='repairs:repairs_restore' url_arg=repair.pk %}
+
         {% endif %}
     {% else %}
         <a href="{% url 'invoices:invoices_detail' repair.invoice.pk %}" class="btn btn-warning btn-sm fw-semibold px-3">

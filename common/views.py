@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
 from cars.models import Car
+from common.mixins import SoftDeletionMixin
+from common.serivces import hard_delete_object, restore_object
 from invoices.models import Invoice
 from repairs.choices import StatusChoice
 from repairs.models import Part, Repair
@@ -23,3 +25,18 @@ class IndexView(TemplateView):
 
         return super().get_context_data(**kwargs)
 
+
+
+class RestoreView(SoftDeletionMixin):
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        restore_object(obj, request.user)
+        return super().post(request, *args, **kwargs)
+
+
+
+class HardDeleteView(SoftDeletionMixin):
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        hard_delete_object(obj, request.user)
+        return super().post(request, *args, **kwargs)

@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404, render
@@ -6,6 +7,7 @@ from django.views.generic import CreateView, ListView, UpdateView, DetailView, D
 from accounts.decorators import group_required
 from accounts.mixins import GroupRequiredMixin, GroupFilterMixin
 from cars.models import Car
+from common.views import HardDeleteView, RestoreView
 from repairs.choices import StatusChoice
 from repairs.forms import CreatePartForm, UpdatePartForm, CreateRepairForm, UpdateRepairForm, RepairPartForm, \
     CreateRepairWithCarForm
@@ -45,6 +47,20 @@ class DeletePartView(GroupRequiredMixin, DeleteView):
     }
 
 
+class HardDeletePartView(HardDeleteView):
+    model = Part
+    success_url = reverse_lazy('repairs:parts_list')
+    template_name = 'repairs/parts/part_hard_delete.html'
+    context_object_name = 'part'
+
+
+class PartRestoreView(RestoreView):
+    model = Part
+    success_url = reverse_lazy('repairs:parts_list')
+    template_name = 'repairs/parts/part_restore.html'
+    context_object_name = 'part'
+
+
 class PartListView(GroupRequiredMixin, ListView):
     group_required = ['Mechanic', 'Manager']
     model = Part
@@ -56,14 +72,21 @@ class PartListView(GroupRequiredMixin, ListView):
     }
 
     def get_queryset(self):
+        if self.request.user.is_staff:
+            queryset = Part.all_objects.all()
+        else:
+            queryset = Part.objects.all()
+
+
         q = self.request.GET.get('q')
         if q:
             query = Q(name__icontains=q) | Q(description__icontains=q)
-            return Part.objects.filter(query)
-        return Part.objects.all()
+            return queryset.filter(query)
+        return queryset
 
 
-class PartDetail(GroupRequiredMixin, DetailView):
+
+class PartDetailView(GroupRequiredMixin, DetailView):
     group_required = ['Mechanic', 'Manager']
     model = Part
     template_name = 'repairs/parts/part_detail.html'
@@ -71,6 +94,11 @@ class PartDetail(GroupRequiredMixin, DetailView):
     extra_context = {
         'title': 'Part Details'
     }
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Part.all_objects.all()
+        return Part.objects.all()
 
 
 class RepairCreateView(GroupRequiredMixin, CreateView):
@@ -111,6 +139,23 @@ class RepairDeleteView(GroupRequiredMixin, DeleteView):
     }
 
 
+class HardDeleteRepairView(GroupRequiredMixin, HardDeleteView):
+    group_required = ['Manager']
+    model = Repair
+    success_url = reverse_lazy('repairs:repairs_list')
+    template_name = 'repairs/repairs/repair_hard_delete.html'
+    context_object_name = 'repair'
+
+
+
+class RepairRestoreView(GroupRequiredMixin, RestoreView):
+    group_required = ['Manager']
+    model = Repair
+    success_url = reverse_lazy('repairs:repairs_list')
+    template_name = 'repairs/repairs/repair_restore.html'
+    context_object_name = 'repair'
+
+
 
 class RepairListView(GroupFilterMixin, ListView):
     group_filter = ['Mechanic', 'Manager']
@@ -141,14 +186,22 @@ class RepairListView(GroupFilterMixin, ListView):
 
 
     def get_queryset(self):
-        q = self.request.GET.get('q')
-        queryset = (Repair.objects.prefetch_related('parts', 'assigned_mechanics').select_related('car').
+        if self.request.user.is_staff:
+            queryset = (Repair.all_objects.prefetch_related('parts', 'assigned_mechanics').select_related('car').
+                        filter(is_invoiced=False).
+                        order_by('-status', '-updated_at'))
+        elif self.in_groups:
+            queryset = (Repair.objects.prefetch_related('parts', 'assigned_mechanics').select_related('car').
                     filter(is_invoiced=False).
                     order_by('-status' , '-updated_at'))
+        else:
+            queryset = (Repair.objects.prefetch_related('parts', 'assigned_mechanics').select_related('car').
+                    filter(is_invoiced=False).
+                    order_by('-status' , '-updated_at')
+                        .filter(car__owner=self.request.user))
 
-        if not self.in_groups:
-            queryset = queryset.filter(car__owner=self.request.user)
 
+        q = self.request.GET.get('q')
         if q:
             query = Q(car__plate__icontains=q) | Q(car__owner__first_name__icontains=q) | Q(car__owner__last_name__icontains=q)
             return queryset.filter(query)
@@ -177,6 +230,8 @@ class RepairDetailView(GroupFilterMixin, DetailView):
     }
 
     def get_queryset(self):
+        if self.request.user.is_staff:
+            return Repair.all_objects.all()
         if self.in_groups:
             return Repair.objects.all()
         return Repair.objects.filter(car__owner=self.request.user)

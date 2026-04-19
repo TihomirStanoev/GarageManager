@@ -1,0 +1,5 @@
+{% extends 'shared/restore_form.html' %}
+
+{% block obj %}{{ part }}{% endblock %}
+
+{% block back_url_block %}{% url 'repairs:parts_detail' part.pk %}{% endblock %}
