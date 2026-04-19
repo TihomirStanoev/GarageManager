@@ -9,7 +9,6 @@ def send_mail_async(
         recipient_list,
         from_email=None,
     ):
-    print('foo bar!')
     send_mail(
         subject=subject,
         message=message,
