@@ -20,9 +20,11 @@
                 <a href="{% url 'repairs:parts_update' part.pk %}" class="btn btn-warning btn-sm fw-semibold px-3">
                     <i class="bi bi-pencil me-1"></i>Edit
                 </a>
-                <a href="{% url 'repairs:parts_delete' part.pk %}" class="btn btn-outline-danger btn-sm px-3">
-                    <i class="bi bi-trash me-1"></i>Delete
-                </a>
+
+                {% include 'shared/delete_buttons/soft_delete_button.html' with obj=part delete_url='repairs:parts_delete' url_arg=part.pk %}
+                {% include 'shared/delete_buttons/hard_delete_button.html' with obj=part hard_delete_url='repairs:parts_hard_delete' url_arg=part.pk %}
+                {% include 'shared/delete_buttons/restore_button.html' with obj=part restore_url='repairs:parts_restore' url_arg=part.pk %}
+
             </div>
         </div>
     </div>

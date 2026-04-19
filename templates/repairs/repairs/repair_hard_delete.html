@@ -1,0 +1,5 @@
+{% extends 'shared/hard_delete_form.html' %}
+
+{% block obj %}{{ repair }}{% endblock %}
+
+{% block back_url_block %}{% url 'repairs:repairs_detail' repair.pk %}{% endblock %}

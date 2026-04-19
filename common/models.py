@@ -48,3 +48,8 @@ class SoftDeletionMixin(models.Model):
     def hard_delete(self, *args, **kwargs):
         super().delete(*args, **kwargs)
 
+
+    def restore(self):
+        self.is_deleted = False
+        self.deleted_at = None
+        self.save()

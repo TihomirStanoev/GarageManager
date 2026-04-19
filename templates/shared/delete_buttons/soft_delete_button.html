@@ -1,0 +1,5 @@
+{% if not obj.is_deleted %}
+    <a href="{% url delete_url url_arg %}" class="btn btn-danger btn-sm fw-semibold px-3">
+        <i class="bi bi-trash me-1"></i>Delete
+    </a>
+{% endif %}

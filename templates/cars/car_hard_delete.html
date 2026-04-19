@@ -1,0 +1,5 @@
+{% extends 'shared/hard_delete_form.html' %}
+
+{% block obj %}{{ car }}{% endblock %}
+
+{% block back_url_block %}{% url 'cars:detail' car.plate %}{% endblock %}

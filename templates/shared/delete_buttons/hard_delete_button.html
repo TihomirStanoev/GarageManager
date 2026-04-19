@@ -1,0 +1,5 @@
+{% if obj.is_deleted and request.user.is_staff %}
+    <a href="{% url hard_delete_url url_arg %}" class="btn btn-outline-danger btn-sm px-3">
+        <i class="bi bi-trash me-1"></i>Hard Delete
+    </a>
+{% endif %}
