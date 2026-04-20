@@ -49,6 +49,8 @@ class CreateInvoiceViewTests(TestCase):
             category=RepairPartMixin.CategoryChoice.OTHER,
             car=self.car,
             status=StatusChoice.COMPLETED,
+            labor_hours=2,
+            price_per_labor_hour=50,
         )
 
     @patch('invoices.views.send_mail_async.delay')
