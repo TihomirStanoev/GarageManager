@@ -6,6 +6,7 @@ from common.managers import SoftDeleteManager
 from common.models import RepairPartMixin, TimeStampedModel, SoftDeletionMixin
 from repairs.choices import StatusChoice
 from django.conf import settings
+from cloudinary.models import CloudinaryField
 
 
 class Part(SoftDeletionMixin, RepairPartMixin):
@@ -13,8 +14,8 @@ class Part(SoftDeletionMixin, RepairPartMixin):
         max_length=50
     )
 
-    image = models.ImageField(
-        upload_to='parts/images',
+    image = CloudinaryField(
+        'parts/images',
         null=True, blank=True
     )
 

@@ -6,6 +6,7 @@ from cars.validators import ProductionYearValidator, PlateValidator
 from common.managers import SoftDeleteManager
 from common.models import TimeStampedModel, SoftDeletionMixin
 from django.conf import settings
+from cloudinary.models import CloudinaryField
 
 class Car(SoftDeletionMixin, TimeStampedModel):
     brand = models.CharField(
@@ -32,8 +33,8 @@ class Car(SoftDeletionMixin, TimeStampedModel):
 
     mileage = models.PositiveIntegerField()
 
-    image = models.ImageField(
-        upload_to='cars/images',
+    image = CloudinaryField(
+        'cars/images',
         null=True, blank=True
     )
 
